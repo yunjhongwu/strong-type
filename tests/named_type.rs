@@ -125,43 +125,39 @@ mod tests {
     }
 
     #[test]
-    fn test_hash() {
-        #[derive(NamedType)]
-        struct Sign(bool);
-
-        let mut map = HashSet::<Sign>::new();
-        map.insert(Sign(true));
-        map.insert(Sign(false));
-        map.insert(Sign(false));
-        assert_eq!(map.len(), 2);
-
-        #[derive(NamedType)]
-        struct Tag(String);
-
-        let mut map = HashSet::<Tag>::new();
-        map.insert(Tag("dev".to_string()));
-        map.insert(Tag("prod".to_string()));
-        assert_eq!(map.len(), 2);
-    }
-
-    #[test]
     fn test_float() {
         #[derive(NamedType)]
         struct Meter(f64);
 
         let y = Meter::nan();
+        assert!(y.is_nan());
         assert!(y.value().is_nan());
+
+        let z = Meter(0.0);
+        assert!(!z.is_nan());
+        assert!(!z.value().is_nan());
     }
 
     #[test]
     fn test_bool() {
         #[derive(NamedType)]
         struct IsTrue(bool);
-        let sign = IsTrue(true);
+        let is_true = IsTrue(true);
 
-        assert!(sign.value());
-        assert!(!(!sign).value());
-        assert!((!!sign).value());
+        assert!(is_true.value());
+        assert!(!(!is_true).value());
+        assert!((!!is_true).value());
+    }
+
+    #[test]
+    fn test_string_ctor() {
+        #[derive(NamedType)]
+        struct Meter(String);
+
+        let _: Meter = "String".to_string().into();
+        let _: Meter = "String".into();
+        let _ = Meter("String".to_string());
+        let _ = Meter::new("&str");
     }
 
     #[test]
@@ -185,5 +181,25 @@ mod tests {
             format!("{:?}", Mile(std::f64::consts::E)),
             format!("Mile {{ value: {} }}", std::f64::consts::E)
         );
+    }
+
+    #[test]
+    fn test_hash() {
+        #[derive(NamedType)]
+        struct Sign(bool);
+
+        let mut map = HashSet::<Sign>::new();
+        map.insert(Sign(true));
+        map.insert(Sign(false));
+        map.insert(Sign(false));
+        assert_eq!(map.len(), 2);
+
+        #[derive(NamedType)]
+        struct Tag(String);
+
+        let mut map = HashSet::<Tag>::new();
+        map.insert(Tag::new("dev"));
+        map.insert(Tag::new("prod"));
+        assert_eq!(map.len(), 2);
     }
 }
