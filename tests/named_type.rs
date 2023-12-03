@@ -9,51 +9,67 @@ mod tests {
         #[derive(NamedNumeric)]
         struct NamedI8(i8);
         let _ = NamedI8(1);
+
         #[derive(NamedNumeric)]
         struct NamedI16(i16);
         let _ = NamedI16(1);
+
         #[derive(NamedNumeric)]
         struct NamedI32(i32);
         let _ = NamedI32(1);
+
         #[derive(NamedNumeric)]
         struct NamedI64(i64);
         let _ = NamedI64(1);
+
         #[derive(NamedNumeric)]
         struct NamedI128(i128);
         let _ = NamedI128(1);
+
         #[derive(NamedNumeric)]
         struct NamedISize(isize);
         let _ = NamedISize(1);
+
         #[derive(NamedNumeric)]
         struct NamedU8(u8);
         let _ = NamedU8(1);
+
         #[derive(NamedNumeric)]
         struct NamedU16(u16);
         let _ = NamedU16(1);
+
         #[derive(NamedNumeric)]
         struct NamedU32(u32);
         let _ = NamedU32(1);
+
         #[derive(NamedNumeric)]
         struct NamedU64(u64);
         let _ = NamedU64(1);
+
         #[derive(NamedNumeric)]
         struct NamedU128(u128);
         let _ = NamedU128(1);
+
         #[derive(NamedNumeric)]
         struct NamedUSize(usize);
         let _ = NamedUSize(1);
+
         #[derive(NamedNumeric)]
         struct NamedF32(f32);
         let _ = NamedF32(1.0);
+
         #[derive(NamedNumeric)]
         struct NamedF64(f64);
         let _ = NamedF64(1.0);
+
         #[derive(NamedType)]
         struct NamedBool(bool);
         let _ = NamedBool(true);
+
         #[derive(NamedType)]
         struct NamedChar(char);
         let _ = NamedChar('a');
+
         #[derive(NamedType)]
         struct NamedString(String);
         let _ = NamedString("string".to_string());
@@ -64,8 +80,10 @@ mod tests {
         #[derive(NamedType)]
         struct IsTrue(bool);
         let sign = IsTrue(true);
+
         assert!(sign.value());
         assert!(!(!sign).value());
+        assert!((!!sign).value());
     }
 
     #[test]
@@ -126,6 +144,14 @@ mod tests {
         map.insert(Sign(false));
         map.insert(Sign(false));
         assert_eq!(map.len(), 2);
+    }
+
+    fn test_float_nan() {
+        #[derive(NamedType)]
+        struct Meter(f64);
+
+        let y = Meter::nan();
+        assert!(y.value().is_nan());
     }
 
     #[test]
