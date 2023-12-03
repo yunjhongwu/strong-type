@@ -2,7 +2,7 @@
 Macros to create strong typed and named values in Rust.
  - `NamedType`: creates a strong type with a name.
  - `NamedNumeric`: creates a strong type with a name and implements traits for arithmetic operations.
- - `default_display`: implements `Display` trait for the type with the default format `TypeName(value)`.
+ - `custom_display`: suppress implementing default `Display` trait for the type and allows users to implement it manually.
 
 ## Supported underlying types:
  - Both `NamedType` and `NamedNumeric`:
@@ -61,7 +61,7 @@ assert!(x < y);
 assert!(y >= x);
 ```
 
-#### Named type with `default_display`:
+#### Named type with `custom_display`:
 
 ```rust
 use named_type::NamedNumeric;
