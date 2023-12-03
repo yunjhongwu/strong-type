@@ -1,1 +1,1 @@
-mod named_type;
+mod strong_type;

@@ -1,10 +1,10 @@
 [package]
-name = "named-type"
+name = "strong-type"
 description = "Procedural macros for naming and strong-typing pritimives and strings"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/yunjhongwu/named-type"
+repository = "https://github.com/yunjhongwu/strong-type"
 readme = "README.md"
 
 [lib]

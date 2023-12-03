@@ -1,84 +1,84 @@
 #[cfg(test)]
 mod tests {
-    use named_type::{NamedNumeric, NamedType};
     use std::any::Any;
     use std::collections::HashSet;
     use std::fmt::Display;
+    use strong_type::{StrongNumericType, StrongType};
 
     #[test]
     fn test_basic() {
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedI8(i8);
         let _ = NamedI8(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedI16(i16);
         let _ = NamedI16(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedI32(i32);
         let _ = NamedI32(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedI64(i64);
         let _ = NamedI64(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedI128(i128);
         let _ = NamedI128(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedISize(isize);
         let _ = NamedISize(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedU8(u8);
         let _ = NamedU8(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedU16(u16);
         let _ = NamedU16(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedU32(u32);
         let _ = NamedU32(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedU64(u64);
         let _ = NamedU64(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedU128(u128);
         let _ = NamedU128(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedUSize(usize);
         let _ = NamedUSize(1);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedF32(f32);
         let _ = NamedF32(1.0);
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct NamedF64(f64);
         let _ = NamedF64(1.0);
 
-        #[derive(NamedType)]
+        #[derive(StrongType)]
         struct NamedBool(bool);
         let _ = NamedBool(true);
 
-        #[derive(NamedType)]
+        #[derive(StrongType)]
         struct NamedChar(char);
         let _ = NamedChar('a');
 
-        #[derive(NamedType)]
+        #[derive(StrongType)]
         struct NamedString(String);
         let _ = NamedString("string".to_string());
     }
 
     #[test]
     fn test_int_arithmetic() {
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct Second(i32);
 
         let x = Second(2);
@@ -109,7 +109,7 @@ mod tests {
 
     #[test]
     fn test_float_arithmetic() {
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct Second(f64);
 
         let x = Second(2.5);
@@ -140,10 +140,10 @@ mod tests {
 
     #[test]
     fn test_strong_type() {
-        #[derive(NamedType)]
+        #[derive(StrongType)]
         struct Second(i32);
 
-        #[derive(NamedType)]
+        #[derive(StrongType)]
         struct Minute(i32);
 
         let x = Second(2);
@@ -156,7 +156,7 @@ mod tests {
 
     #[test]
     fn test_float_nan() {
-        #[derive(NamedType)]
+        #[derive(StrongType)]
         struct Meter(f64);
 
         let y = Meter::nan();
@@ -170,7 +170,7 @@ mod tests {
 
     #[test]
     fn test_bool_negate() {
-        #[derive(NamedType)]
+        #[derive(StrongType)]
         struct IsTrue(bool);
         let is_true = IsTrue(true);
 
@@ -181,7 +181,7 @@ mod tests {
 
     #[test]
     fn test_string_ctor() {
-        #[derive(NamedType)]
+        #[derive(StrongType)]
         struct Meter(String);
 
         let _: Meter = "String".to_string().into();
@@ -192,12 +192,12 @@ mod tests {
 
     #[test]
     fn test_display() {
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         struct Meter(i32);
         assert_eq!(format!("{}", Meter(-2)), "Meter(-2)");
         assert_eq!(format!("{:?}", Meter(-2)), "Meter { value: -2 }");
 
-        #[derive(NamedNumeric)]
+        #[derive(StrongNumericType)]
         #[custom_display]
         struct Mile(f64);
 
@@ -215,7 +215,7 @@ mod tests {
 
     #[test]
     fn test_hash() {
-        #[derive(NamedType)]
+        #[derive(StrongType)]
         struct Sign(bool);
 
         let mut map = HashSet::<Sign>::new();
@@ -224,7 +224,7 @@ mod tests {
         map.insert(Sign(false));
         assert_eq!(map.len(), 2);
 
-        #[derive(NamedType)]
+        #[derive(StrongType)]
         struct Tag(String);
 
         let mut map = HashSet::<Tag>::new();
