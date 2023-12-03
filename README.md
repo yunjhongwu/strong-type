@@ -6,7 +6,7 @@ use strong_type::StrongType;
 #[derive(StrongType)]
 struct Timestamp(i64);
 
-let timestamp = Timestamp(1701620628123456789);
+let timestamp = Timestamp::new(1701620628123456789);
 println!("{}", timestamp); // Timestamp(1701620628123456789)
 ```
 
@@ -33,7 +33,6 @@ use strong_type::StrongType;
 #[derive(StrongType)]
 struct Tag(String);
 
-let _ = Tag("dev".to_string());
 let tag = Tag::new("dev");
 let tag: Tag = "dev".into();
 ```
@@ -50,9 +49,9 @@ struct Second(i32);
 #[derive(StrongType)]
 struct Minute(i32);
 
-let x = Second(2);
-let y = Second(3);
-let z = Minute(3);
+let x = Second::new(2);
+let y = Second::new(3);
+let z = Minute::new(3);
 
 assert_eq!(x.type_id(), y.type_id()); // Same type: Second
 assert_ne!(y.type_id(), z.type_id()); // Different type: Second versus Minute
@@ -66,8 +65,8 @@ use strong_type::StrongNumericType;
 #[derive(StrongNumericType)]
 struct Second(i32);
 
-let x = Second(2);
-let y = Second(3);
+let x = Second::new(2);
+let y = Second::new(3);
 
 assert_eq!(x.value(), 2);
 assert_eq!(y.value(), 3);
@@ -91,6 +90,6 @@ impl Display for Second {
    }
 }
 
-println!("{}", Second(std::f64::consts::E)); // "Second(2.72)"
-println!("{:?}", Second(std::f64::consts::E)); // "Second { value: 2.718281828459045 }"
+println!("{}", Second::new(std::f64::consts::E)); // "Second(2.72)"
+println!("{:?}", Second::new(std::f64::consts::E)); // "Second { value: 2.718281828459045 }"
 ```

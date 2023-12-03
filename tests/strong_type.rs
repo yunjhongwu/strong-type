@@ -9,71 +9,71 @@ mod tests {
     fn test_basic() {
         #[derive(StrongNumericType)]
         struct NamedI8(i8);
-        let _ = NamedI8(1);
+        let _ = NamedI8::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedI16(i16);
-        let _ = NamedI16(1);
+        let _ = NamedI16::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedI32(i32);
-        let _ = NamedI32(1);
+        let _ = NamedI32::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedI64(i64);
-        let _ = NamedI64(1);
+        let _ = NamedI64::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedI128(i128);
-        let _ = NamedI128(1);
+        let _ = NamedI128::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedISize(isize);
-        let _ = NamedISize(1);
+        let _ = NamedISize::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedU8(u8);
-        let _ = NamedU8(1);
+        let _ = NamedU8::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedU16(u16);
-        let _ = NamedU16(1);
+        let _ = NamedU16::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedU32(u32);
-        let _ = NamedU32(1);
+        let _ = NamedU32::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedU64(u64);
-        let _ = NamedU64(1);
+        let _ = NamedU64::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedU128(u128);
-        let _ = NamedU128(1);
+        let _ = NamedU128::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedUSize(usize);
-        let _ = NamedUSize(1);
+        let _ = NamedUSize::new(1);
 
         #[derive(StrongNumericType)]
         struct NamedF32(f32);
-        let _ = NamedF32(1.0);
+        let _ = NamedF32::new(1.0);
 
         #[derive(StrongNumericType)]
         struct NamedF64(f64);
-        let _ = NamedF64(1.0);
+        let _ = NamedF64::new(1.0);
 
         #[derive(StrongType)]
         struct NamedBool(bool);
-        let _ = NamedBool(true);
+        let _ = NamedBool::new(true);
 
         #[derive(StrongType)]
         struct NamedChar(char);
-        let _ = NamedChar('a');
+        let _ = NamedChar::new('a');
 
         #[derive(StrongType)]
         struct NamedString(String);
-        let _ = NamedString("string".to_string());
+        let _ = NamedString::new("string");
     }
 
     #[test]
@@ -81,27 +81,27 @@ mod tests {
         #[derive(StrongNumericType)]
         struct Second(i32);
 
-        let x = Second(2);
-        let mut y = Second(3);
-        assert_eq!(y + x, Second(5));
-        assert_eq!(y - x, Second(1));
-        assert_eq!(y * x, Second(6));
-        assert_eq!(y / x, Second(1));
+        let x = Second::new(2);
+        let mut y = Second::new(3);
+        assert_eq!(y + x, Second::new(5));
+        assert_eq!(y - x, Second::new(1));
+        assert_eq!(y * x, Second::new(6));
+        assert_eq!(y / x, Second::new(1));
         assert!(x < y);
         assert!(y >= x);
 
         y += x;
-        assert_eq!(y, Second(5));
+        assert_eq!(y, Second::new(5));
         y -= x;
-        assert_eq!(y, Second(3));
+        assert_eq!(y, Second::new(3));
         y *= x;
-        assert_eq!(y, Second(6));
+        assert_eq!(y, Second::new(6));
         y /= x;
-        assert_eq!(y, Second(3));
+        assert_eq!(y, Second::new(3));
 
-        let z = Second(2);
+        let z = Second::new(2);
 
-        assert_eq!(-z, Second(-2));
+        assert_eq!(-z, Second::new(-2));
 
         assert_eq!(Second::max().value(), i32::MAX);
         assert_eq!(Second::min().value(), i32::MIN);
@@ -112,27 +112,27 @@ mod tests {
         #[derive(StrongNumericType)]
         struct Second(f64);
 
-        let x = Second(2.5);
-        let mut y = Second(3.5);
-        assert_eq!(y + x, Second(6.0));
-        assert_eq!(y - x, Second(1.0));
-        assert_eq!(y * x, Second(8.75));
-        assert_eq!(y / x, Second(1.4));
+        let x = Second::new(2.5);
+        let mut y = Second::new(3.5);
+        assert_eq!(y + x, Second::new(6.0));
+        assert_eq!(y - x, Second::new(1.0));
+        assert_eq!(y * x, Second::new(8.75));
+        assert_eq!(y / x, Second::new(1.4));
         assert!(x < y);
         assert!(y >= x);
 
         y += x;
-        assert_eq!(y, Second(6.0));
+        assert_eq!(y, Second::new(6.0));
         y -= x;
-        assert_eq!(y, Second(3.5));
+        assert_eq!(y, Second::new(3.5));
         y *= x;
-        assert_eq!(y, Second(8.75));
+        assert_eq!(y, Second::new(8.75));
         y /= x;
-        assert_eq!(y, Second(3.5));
+        assert_eq!(y, Second::new(3.5));
 
-        let z = Second(2.0);
+        let z = Second::new(2.0);
 
-        assert_eq!(-z, Second(-2.0));
+        assert_eq!(-z, Second::new(-2.0));
 
         assert_eq!(Second::max().value(), f64::MAX);
         assert_eq!(Second::min().value(), f64::MIN);
@@ -146,9 +146,9 @@ mod tests {
         #[derive(StrongType)]
         struct Minute(i32);
 
-        let x = Second(2);
-        let y = Second(3);
-        let z = Minute(3);
+        let x = Second::new(2);
+        let y = Second::new(3);
+        let z = Minute::new(3);
 
         assert_eq!(x.type_id(), y.type_id());
         assert_ne!(y.type_id(), z.type_id());
@@ -186,7 +186,6 @@ mod tests {
 
         let _: Meter = "String".to_string().into();
         let _: Meter = "String".into();
-        let _ = Meter("String".to_string());
         let _ = Meter::new("&str");
     }
 
@@ -219,9 +218,9 @@ mod tests {
         struct Sign(bool);
 
         let mut map = HashSet::<Sign>::new();
-        map.insert(Sign(true));
-        map.insert(Sign(false));
-        map.insert(Sign(false));
+        map.insert(Sign::new(true));
+        map.insert(Sign::new(false));
+        map.insert(Sign::new(false));
         assert_eq!(map.len(), 2);
 
         #[derive(StrongType)]
