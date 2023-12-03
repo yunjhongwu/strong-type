@@ -8,7 +8,8 @@ enum UnderlyingType {
     Int,
     Float,
     UInt,
-    Singleton,
+    Bool,
+    Char,
     String,
 }
 
@@ -43,6 +44,18 @@ pub(super) fn expand_named_type(input: DeriveInput, impl_arithmetic: bool) -> To
         output_ast.extend(expand_nan(name, value_type));
     }
 
+    if let UnderlyingType::Bool = &group {
+        output_ast.extend(quote! {
+            impl std::ops::Not for #name {
+               type Output = Self;
+
+                fn not(self) -> Self::Output {
+                    #name(!self.value())
+                }
+            }
+        });
+    }
+
     if impl_arithmetic {
         match &group {
             UnderlyingType::Int | UnderlyingType::UInt | UnderlyingType::Float => {
@@ -57,7 +70,8 @@ pub(super) fn expand_named_type(input: DeriveInput, impl_arithmetic: bool) -> To
 
     if let UnderlyingType::Int
     | UnderlyingType::UInt
-    | UnderlyingType::Singleton
+    | UnderlyingType::Bool
+    | UnderlyingType::Char
     | UnderlyingType::String = &group
     {
         output_ast.extend(expand_hashable(name));
@@ -80,7 +94,8 @@ fn get_type_group(value_type: &syn::Ident) -> UnderlyingType {
         "i8" | "i16" | "i32" | "i64" | "i128" | "isize" => UnderlyingType::Int,
         "u8" | "u16" | "u32" | "u64" | "u128" | "usize" => UnderlyingType::UInt,
         "f32" | "f64" => UnderlyingType::Float,
-        "bool" | "char" => UnderlyingType::Singleton,
+        "bool" => UnderlyingType::Bool,
+        "char" => UnderlyingType::Char,
         "String" => UnderlyingType::String,
         _ => panic!("Unsupported type"),
     }
