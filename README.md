@@ -86,7 +86,7 @@ struct Second(f64);
 
 impl Display for Second {
    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-      write!(f, "Mile({:.2})", &self.0)
+      write!(f, "Second({:.2})", &self.0)
    }
 }
 
