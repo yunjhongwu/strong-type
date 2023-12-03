@@ -13,7 +13,7 @@ pub(super) fn expand_named_type(input: DeriveInput, impl_arithmetic: bool) -> To
     let group = get_type(value_type);
 
     let mut ast = quote!();
-    ast.extend(implement_basic(name));
+    ast.extend(implement_basic(name, value_type));
     if !custom_display(&input) {
         ast.extend(implement_display(name));
     };

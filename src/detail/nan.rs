@@ -7,6 +7,10 @@ pub(crate) fn implement_nan(name: &syn::Ident, value_type: &syn::Ident) -> Token
             fn nan() -> Self {
                 Self(#value_type::NAN)
             }
+
+            fn is_nan(&self) -> bool {
+                self.0.is_nan()
+            }
         }
     }
 }
