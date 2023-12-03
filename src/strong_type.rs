@@ -7,7 +7,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::DeriveInput;
 
-pub(super) fn expand_named_type(input: DeriveInput, impl_arithmetic: bool) -> TokenStream {
+pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> TokenStream {
     let name = &input.ident;
     let value_type = get_type_ident(&input);
     let group = get_type(value_type);
