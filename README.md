@@ -23,6 +23,7 @@ struct Tag(String);
 
 let tag = Tag("dev".to_string());
 println!("{:?}", tag); // Tag { value: "dev" }
+println!("{}", tag); // Tag("dev")
 ```
 
 #### Strong type:
@@ -66,9 +67,16 @@ assert!(y >= x);
 use named_type::NamedNumeric;
 
 #[derive(NamedNumeric)]
-#[default_display]
-struct Second(i32);
+#[custom_display]
+struct Mile(i32);
 
-println!("{}", Second(2)); // "Second(2)"
-println!("{:?}", Second(2)); // "Second { value: 2 }"
+impl Display for Mile {
+   fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+      write!(f, "Mile({:.2})", &self.0)
+   }
+}
+
+println!("{}", Second(std::f64::consts::E)); // "Mile(2.72)"
+println!("{:?}", Second(std::f64::consts::E)); // "Second { value: 2.718281828459045 }"
+
 ```
