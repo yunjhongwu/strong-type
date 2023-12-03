@@ -3,6 +3,7 @@ mod tests {
     use named_type::{NamedNumeric, NamedType};
     use std::any::Any;
     use std::collections::HashSet;
+    use std::fmt::Display;
 
     #[test]
     fn test_basic() {
@@ -76,17 +77,6 @@ mod tests {
     }
 
     #[test]
-    fn test_named_bool() {
-        #[derive(NamedType)]
-        struct IsTrue(bool);
-        let sign = IsTrue(true);
-
-        assert!(sign.value());
-        assert!(!(!sign).value());
-        assert!((!!sign).value());
-    }
-
-    #[test]
     fn test_arithmetic() {
         #[derive(NamedNumeric)]
         struct Second(i32);
@@ -144,19 +134,7 @@ mod tests {
         map.insert(Sign(false));
         map.insert(Sign(false));
         assert_eq!(map.len(), 2);
-    }
 
-    #[test]
-    fn test_float_nan() {
-        #[derive(NamedType)]
-        struct Meter(f64);
-
-        let y = Meter::nan();
-        assert!(y.value().is_nan());
-    }
-
-    #[test]
-    fn test_string() {
         #[derive(NamedType)]
         struct Tag(String);
 
@@ -167,11 +145,45 @@ mod tests {
     }
 
     #[test]
+    fn test_float() {
+        #[derive(NamedType)]
+        struct Meter(f64);
+
+        let y = Meter::nan();
+        assert!(y.value().is_nan());
+    }
+
+    #[test]
+    fn test_bool() {
+        #[derive(NamedType)]
+        struct IsTrue(bool);
+        let sign = IsTrue(true);
+
+        assert!(sign.value());
+        assert!(!(!sign).value());
+        assert!((!!sign).value());
+    }
+
+    #[test]
     fn test_display() {
         #[derive(NamedNumeric)]
-        #[default_display]
         struct Meter(i32);
         assert_eq!(format!("{}", Meter(-2)), "Meter(-2)");
         assert_eq!(format!("{:?}", Meter(-2)), "Meter { value: -2 }");
+
+        #[derive(NamedNumeric)]
+        #[custom_display]
+        struct Mile(f64);
+
+        impl Display for Mile {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(f, "Mile({:.2})", &self.0)
+            }
+        }
+        assert_eq!(format!("{}", Mile(std::f64::consts::E)), "Mile(2.72)");
+        assert_eq!(
+            format!("{:?}", Mile(std::f64::consts::E)),
+            format!("Mile {{ value: {} }}", std::f64::consts::E)
+        );
     }
 }

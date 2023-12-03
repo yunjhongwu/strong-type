@@ -1,8 +1,8 @@
 # named-type
 Macros to create strong typed and named values in Rust.
- - `NamedType`: creates a strong type with a name.
- - `NamedNumeric`: creates a strong type with a name and implements traits for arithmetic operations.
- - `default_display`: implements `Display` trait for the type with the default format `TypeName(value)`.
+ - `NamedType` creates a strong type with a name.
+ - `NamedNumeric` creates a strong type with a name and implements traits for arithmetic operations.
+ - `custom_display` suppresses the default `Display` trait implementation and allows users to implement it manually.
 
 ## Supported underlying types:
  - Both `NamedType` and `NamedNumeric`:
@@ -23,6 +23,7 @@ struct Tag(String);
 
 let tag = Tag("dev".to_string());
 println!("{:?}", tag); // Tag { value: "dev" }
+println!("{}", tag); // Tag("dev")
 ```
 
 #### Strong type:
@@ -60,15 +61,22 @@ assert!(x < y);
 assert!(y >= x);
 ```
 
-#### Named type with `default_display`:
+#### Named type with `custom_display`:
 
 ```rust
 use named_type::NamedNumeric;
 
 #[derive(NamedNumeric)]
-#[default_display]
-struct Second(i32);
+#[custom_display]
+struct Mile(i32);
 
-println!("{}", Second(2)); // "Second(2)"
-println!("{:?}", Second(2)); // "Second { value: 2 }"
+impl Display for Mile {
+   fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+      write!(f, "Mile({:.2})", &self.0)
+   }
+}
+
+println!("{}", Second(std::f64::consts::E)); // "Mile(2.72)"
+println!("{:?}", Second(std::f64::consts::E)); // "Second { value: 2.718281828459045 }"
+
 ```
