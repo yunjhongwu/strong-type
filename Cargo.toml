@@ -1,16 +1,19 @@
 [package]
 name = "named-type"
-description = "Named type macro"
+description = "Procedural macros for naming and strong-typing pritimives and strings"
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yunjhongwu/named-type"
+readme = "README.md"
 
 [lib]
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "1.0.50"
-quote = "1.0.23"
-syn = "2.0.10"
+proc-macro2 = "1"
+quote = "1"
+syn = "2"
 
 [[test]]
 name = "integration"
