@@ -19,12 +19,7 @@ pub(super) fn expand_named_type(input: DeriveInput, impl_arithmetic: bool) -> To
     };
 
     match &group {
-        UnderlyingType::Int => {
-            ast.extend(implement_basic_primitive(name, value_type));
-            ast.extend(implement_min_max(name, value_type));
-            ast.extend(implement_hash(name));
-        }
-        UnderlyingType::UInt => {
+        UnderlyingType::Int | UnderlyingType::UInt => {
             ast.extend(implement_basic_primitive(name, value_type));
             ast.extend(implement_min_max(name, value_type));
             ast.extend(implement_hash(name));
@@ -51,16 +46,12 @@ pub(super) fn expand_named_type(input: DeriveInput, impl_arithmetic: bool) -> To
 
     if impl_arithmetic {
         match &group {
-            UnderlyingType::Int => {
+            UnderlyingType::Int | UnderlyingType::Float => {
                 ast.extend(implement_arithmetic(name));
                 ast.extend(implement_negate(name));
             }
             UnderlyingType::UInt => {
                 ast.extend(implement_arithmetic(name));
-            }
-            UnderlyingType::Float => {
-                ast.extend(implement_arithmetic(name));
-                ast.extend(implement_negate(name));
             }
             _ => panic!("Non-arithmetic type {value_type}"),
         }
