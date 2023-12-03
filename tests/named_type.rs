@@ -146,6 +146,7 @@ mod tests {
         assert_eq!(map.len(), 2);
     }
 
+    #[test]
     fn test_float_nan() {
         #[derive(NamedType)]
         struct Meter(f64);
