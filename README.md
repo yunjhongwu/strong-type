@@ -1,7 +1,15 @@
 # named-type
+```rust
+use named_type::NamedType;
+
+#[derive(NamedType)]
+struct Timestamp(i64);
+let timestamp = Timestamp(1701620628123456789);
+```
+
 Macros to create strong typed and named values in Rust.
- - `NamedType` creates a strong type with a name.
- - `NamedNumeric` creates a strong type with a name and implements traits for arithmetic operations.
+ - `NamedType` creates a named strong type.
+ - `NamedNumeric` creates a named strong type and implements traits for arithmetic operations.
  - `custom_display` suppresses the default `Display` trait implementation and allows users to implement it manually.
 
 ## Supported underlying types:
@@ -15,15 +23,16 @@ Macros to create strong typed and named values in Rust.
    - `String`
 
 ## Examples
+#### Create a named type:
 ```rust
 use named_type::NamedType;
 
 #[derive(NamedType)]
 struct Tag(String);
 
-let tag = Tag("dev".to_string());
-println!("{:?}", tag); // Tag { value: "dev" }
-println!("{}", tag); // Tag("dev")
+let _ = Tag("dev".to_string());
+let tag = Tag::new("dev");
+let tag: Tag = "dev".into();
 ```
 
 #### Strong type:
@@ -42,8 +51,8 @@ let x = Second(2);
 let y = Second(3);
 let z = Minute(3);
 
-assert_eq!(x.type_id(), y.type_id());
-assert_ne!(y.type_id(), z.type_id());
+assert_eq!(x.type_id(), y.type_id()); // Same type: Second
+assert_ne!(y.type_id(), z.type_id()); // Different type: Second versus Minute
 ```
 
 #### Named type with arithmetic operations:
@@ -59,6 +68,7 @@ assert_eq!(x.value(), 2);
 let mut y = Second(3);
 assert!(x < y);
 assert!(y >= x);
+asssrt_eq!(x + y, Second(5));
 ```
 
 #### Named type with `custom_display`:
@@ -76,7 +86,7 @@ impl Display for Mile {
    }
 }
 
-println!("{}", Second(std::f64::consts::E)); // "Mile(2.72)"
+println!("{}", Second(std::f64::consts::E)); // "Second(2.72)"
 println!("{:?}", Second(std::f64::consts::E)); // "Second { value: 2.718281828459045 }"
 
 ```
