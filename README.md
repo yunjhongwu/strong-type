@@ -1,16 +1,19 @@
 # named-type
+`named-type` is a Rust crate providing macros to create strongly typed and named values. It simplifies the process of defining types that are distinct at the type level but share underlying data structures. 
 ```rust
 use named_type::NamedType;
 
 #[derive(NamedType)]
 struct Timestamp(i64);
+
 let timestamp = Timestamp(1701620628123456789);
+println!("{}", timestamp); // Timestamp(1701620628123456789)
 ```
 
-Macros to create strong typed and named values in Rust.
- - `NamedType` creates a named strong type.
- - `NamedNumeric` creates a named strong type and implements traits for arithmetic operations.
- - `custom_display` suppresses the default `Display` trait implementation and allows users to implement it manually.
+## Features
+- `NamedType`: Create a named strong type.
+- `NamedNumeric`: Extend `NamedType` with arithmetic operations.
+- `custom_display`: Allow users to manually implement `Display` instead of using the default display format.
 
 ## Supported underlying types:
  - Both `NamedType` and `NamedNumeric`:
@@ -64,11 +67,13 @@ use named_type::NamedNumeric;
 struct Second(i32);
 
 let x = Second(2);
+let y = Second(3);
+
 assert_eq!(x.value(), 2);
-let mut y = Second(3);
+assert_eq!(y.value(), 3);
 assert!(x < y);
 assert!(y >= x);
-asssrt_eq!(x + y, Second(5));
+assert_eq!(x + y, Second(5));
 ```
 
 #### Named type with `custom_display`:
@@ -78,9 +83,9 @@ use named_type::NamedNumeric;
 
 #[derive(NamedNumeric)]
 #[custom_display]
-struct Mile(i32);
+struct Second(f64);
 
-impl Display for Mile {
+impl Display for Second {
    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
       write!(f, "Mile({:.2})", &self.0)
    }
@@ -88,5 +93,4 @@ impl Display for Mile {
 
 println!("{}", Second(std::f64::consts::E)); // "Second(2.72)"
 println!("{:?}", Second(std::f64::consts::E)); // "Second { value: 2.718281828459045 }"
-
 ```
