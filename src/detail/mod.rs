@@ -20,4 +20,4 @@ pub(crate) use min_max::implement_min_max;
 pub(crate) use nan::implement_nan;
 pub(crate) use negate::implement_negate;
 pub(crate) use not::implement_not;
-pub(crate) use underlying_type::{get_type, get_type_ident, UnderlyingType};
+pub(crate) use underlying_type::{get_type_group, get_type_ident, UnderlyingTypeGroup};

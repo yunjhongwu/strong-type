@@ -2,7 +2,7 @@ use syn::{Data, DeriveInput, Type};
 
 #[repr(u8)]
 #[derive(Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Copy, Clone)]
-pub(crate) enum UnderlyingType {
+pub(crate) enum UnderlyingTypeGroup {
     Int,
     Float,
     UInt,
@@ -20,14 +20,36 @@ pub(crate) fn get_type_ident(input: &DeriveInput) -> &syn::Ident {
     panic!("Unsupported input")
 }
 
-pub(crate) fn get_type(value_type: &syn::Ident) -> UnderlyingType {
-    match value_type.to_string().as_str() {
-        "i8" | "i16" | "i32" | "i64" | "i128" | "isize" => UnderlyingType::Int,
-        "u8" | "u16" | "u32" | "u64" | "u128" | "usize" => UnderlyingType::UInt,
-        "f32" | "f64" => UnderlyingType::Float,
-        "bool" => UnderlyingType::Bool,
-        "char" => UnderlyingType::Char,
-        "String" => UnderlyingType::String,
-        _ => panic!("Unsupported type"),
+pub(crate) fn get_type_group(value_type: &syn::Ident) -> UnderlyingTypeGroup {
+    if value_type == "i8"
+        || value_type == "i16"
+        || value_type == "i32"
+        || value_type == "i64"
+        || value_type == "i128"
+        || value_type == "isize"
+    {
+        return UnderlyingTypeGroup::Int;
     }
+    if value_type == "u8"
+        || value_type == "u16"
+        || value_type == "u32"
+        || value_type == "u64"
+        || value_type == "u128"
+        || value_type == "usize"
+    {
+        return UnderlyingTypeGroup::UInt;
+    }
+    if value_type == "f32" || value_type == "f64" {
+        return UnderlyingTypeGroup::Float;
+    }
+    if value_type == "bool" {
+        return UnderlyingTypeGroup::Bool;
+    }
+    if value_type == "char" {
+        return UnderlyingTypeGroup::Char;
+    }
+    if value_type == "String" {
+        return UnderlyingTypeGroup::String;
+    }
+    panic!("Unsupported type: {}", value_type);
 }

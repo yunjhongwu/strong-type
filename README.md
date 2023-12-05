@@ -54,7 +54,7 @@ let y = Second::new(3);
 let z = Minute::new(3);
 
 assert_eq!(x.type_id(), y.type_id()); // Same type: Second
-assert_ne!(y.type_id(), z.type_id()); // Different type: Second versus Minute
+assert_ne!(y.type_id(), z.type_id()); // Different types: Second versus Minute
 ```
 
 #### Named type with arithmetic operations:
