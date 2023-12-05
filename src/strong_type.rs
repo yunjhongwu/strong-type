@@ -1,7 +1,7 @@
 use crate::detail::{
-    custom_display, get_type, get_type_ident, implement_arithmetic, implement_basic,
+    custom_display, get_type_group, get_type_ident, implement_arithmetic, implement_basic,
     implement_basic_primitive, implement_basic_string, implement_display, implement_hash,
-    implement_min_max, implement_nan, implement_negate, implement_not, UnderlyingType,
+    implement_min_max, implement_nan, implement_negate, implement_not, UnderlyingTypeGroup,
 };
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -10,7 +10,7 @@ use syn::DeriveInput;
 pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> TokenStream {
     let name = &input.ident;
     let value_type = get_type_ident(&input);
-    let group = get_type(value_type);
+    let group = get_type_group(value_type);
 
     let mut ast = quote!();
     ast.extend(implement_basic(name));
@@ -19,26 +19,26 @@ pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> T
     };
 
     match &group {
-        UnderlyingType::Int | UnderlyingType::UInt => {
+        UnderlyingTypeGroup::Int | UnderlyingTypeGroup::UInt => {
             ast.extend(implement_basic_primitive(name, value_type));
             ast.extend(implement_min_max(name, value_type));
             ast.extend(implement_hash(name));
         }
-        UnderlyingType::Float => {
+        UnderlyingTypeGroup::Float => {
             ast.extend(implement_basic_primitive(name, value_type));
             ast.extend(implement_min_max(name, value_type));
             ast.extend(implement_nan(name, value_type));
         }
-        UnderlyingType::Bool => {
+        UnderlyingTypeGroup::Bool => {
             ast.extend(implement_basic_primitive(name, value_type));
             ast.extend(implement_not(name));
             ast.extend(implement_hash(name));
         }
-        UnderlyingType::Char => {
+        UnderlyingTypeGroup::Char => {
             ast.extend(implement_basic_primitive(name, value_type));
             ast.extend(implement_hash(name));
         }
-        UnderlyingType::String => {
+        UnderlyingTypeGroup::String => {
             ast.extend(implement_basic_string(name));
             ast.extend(implement_hash(name));
         }
@@ -46,11 +46,11 @@ pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> T
 
     if impl_arithmetic {
         match &group {
-            UnderlyingType::Int | UnderlyingType::Float => {
+            UnderlyingTypeGroup::Int | UnderlyingTypeGroup::Float => {
                 ast.extend(implement_arithmetic(name));
                 ast.extend(implement_negate(name));
             }
-            UnderlyingType::UInt => {
+            UnderlyingTypeGroup::UInt => {
                 ast.extend(implement_arithmetic(name));
             }
             _ => panic!("Non-arithmetic type {value_type}"),
