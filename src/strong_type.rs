@@ -5,9 +5,22 @@ use crate::detail::{
 };
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::DeriveInput;
+use syn::{Data, DeriveInput};
+
+fn is_struct_valid(input: &DeriveInput) -> bool {
+    if let Data::Struct(data_struct) = &input.data {
+        if let syn::Fields::Unnamed(fields_unnamed) = &data_struct.fields {
+            return fields_unnamed.unnamed.len() == 1;
+        }
+    }
+    false
+}
 
 pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> TokenStream {
+    if !is_struct_valid(&input) {
+        panic!("Strong type must be a tuple struct with one field.");
+    }
+
     let name = &input.ident;
     let value_type = get_type_ident(&input);
     let group = get_type_group(value_type);
