@@ -64,7 +64,7 @@ mod tests {
         struct NamedF64(f64);
         let _ = NamedF64::new(1.0);
 
-        #[derive(StrongType)]
+        #[derive(StrongNumericType)]
         struct NamedBool(bool);
         let _ = NamedBool::new(true);
 
