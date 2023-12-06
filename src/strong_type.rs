@@ -1,7 +1,7 @@
 use crate::detail::{
     custom_display, get_type_group, get_type_ident, implement_arithmetic, implement_basic,
-    implement_basic_primitive, implement_basic_string, implement_display, implement_hash,
-    implement_min_max, implement_nan, implement_negate, implement_not, UnderlyingTypeGroup,
+    implement_basic_primitive, implement_basic_string, implement_bool_ops, implement_display,
+    implement_hash, implement_min_max, implement_nan, implement_negate, UnderlyingTypeGroup,
 };
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -31,7 +31,6 @@ pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> T
         }
         UnderlyingTypeGroup::Bool => {
             ast.extend(implement_basic_primitive(name, value_type));
-            ast.extend(implement_not(name));
             ast.extend(implement_hash(name));
         }
         UnderlyingTypeGroup::Char => {
@@ -53,7 +52,10 @@ pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> T
             UnderlyingTypeGroup::UInt => {
                 ast.extend(implement_arithmetic(name));
             }
-            _ => panic!("Non-arithmetic type {value_type}"),
+            UnderlyingTypeGroup::Bool => {
+                ast.extend(implement_bool_ops(name));
+            }
+            _ => panic!("Non-numeric type: {value_type}"),
         }
     }
 

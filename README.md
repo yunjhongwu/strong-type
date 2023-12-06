@@ -57,7 +57,7 @@ assert_eq!(x.type_id(), y.type_id()); // Same type: Second
 assert_ne!(y.type_id(), z.type_id()); // Different types: Second versus Minute
 ```
 
-#### Named type with arithmetic operations:
+#### Named integer type with arithmetic operations:
 
 ```rust
 use strong_type::StrongNumericType;
@@ -73,6 +73,23 @@ assert_eq!(y.value(), 3);
 assert!(x < y);
 assert!(y >= x);
 assert_eq!(x + y, Second(5));
+```
+
+#### Named bool type with logical operations:
+
+```rust
+use strong_type::StrongNumericType;
+
+#[derive(StrongNumericType)]
+struct IsTrue(bool);
+
+let x = IsTrue::new(true);
+let y = IsTrue::new(false);
+
+assert_eq!(x & y, IsTrue::new(false));
+assert_eq!(x | y, IsTrue::new(true));
+assert_eq!(x ^ y_ref, IsTrue::new(true));
+assert_eq!(!x, IsTrue::new(false));
 ```
 
 #### Named type with `custom_display`:
