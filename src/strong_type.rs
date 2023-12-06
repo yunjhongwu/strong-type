@@ -55,7 +55,7 @@ pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> T
             UnderlyingTypeGroup::Bool => {
                 ast.extend(implement_bool_ops(name));
             }
-            _ => panic!("Non-arithmetic type {value_type}"),
+            _ => panic!("Non-numeric type: {value_type}"),
         }
     }
 
