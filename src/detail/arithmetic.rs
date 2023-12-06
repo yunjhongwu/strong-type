@@ -3,56 +3,208 @@ use quote::quote;
 
 pub(crate) fn implement_arithmetic(name: &syn::Ident) -> TokenStream {
     quote! {
-        impl std::ops::Add for #name {
+        impl std::ops::Add<Self> for #name {
             type Output = Self;
 
             fn add(self, rhs: Self) -> Self::Output {
-                Self(self.value() + rhs.value())
+                Self::new(self.value() + rhs.value())
             }
         }
 
-        impl std::ops::AddAssign for #name {
+        impl std::ops::Add<&Self> for #name {
+            type Output = <Self as std::ops::Add<Self>>::Output;
+
+            fn add(self, rhs: &Self) -> Self::Output {
+                Self::new(self.value() + rhs.value())
+            }
+        }
+
+        impl<'a> std::ops::Add<#name> for &'a #name {
+            type Output = #name;
+
+            fn add(self, rhs: #name) -> Self::Output {
+                #name::new(self.value() + rhs.value())
+            }
+        }
+
+        impl<'a> std::ops::Add<&#name> for &'a #name {
+            type Output = #name;
+
+            fn add(self, rhs: &#name) -> Self::Output {
+                #name::new(self.value() + rhs.value())
+            }
+        }
+
+        impl std::ops::AddAssign<Self> for #name {
             fn add_assign(&mut self, rhs: Self) {
                 self.0 += rhs.value()
             }
         }
 
-        impl std::ops::Sub for #name {
-            type Output = Self;
-            fn sub(self, rhs: Self) -> Self::Output {
-                Self(self.value() - rhs.value())
+        impl std::ops::AddAssign<&Self> for #name {
+            fn add_assign(&mut self, rhs: &Self) {
+                self.0 += rhs.value()
             }
         }
 
-        impl std::ops::SubAssign for #name {
+        impl std::ops::Sub<Self> for #name {
+            type Output = Self;
+            fn sub(self, rhs: Self) -> Self::Output {
+                Self::new(self.value() - rhs.value())
+            }
+        }
+
+        impl std::ops::Sub<&#name> for #name {
+            type Output = Self;
+            fn sub(self, rhs: &Self) -> Self::Output {
+                Self::new(self.value() - rhs.value())
+            }
+        }
+
+        impl<'a> std::ops::Sub<#name> for &'a #name {
+            type Output = #name;
+            fn sub(self, rhs: #name) -> Self::Output {
+                #name::new(self.value() - rhs.value())
+            }
+        }
+
+        impl<'a> std::ops::Sub<&#name> for &'a #name {
+            type Output = #name;
+            fn sub(self, rhs: &#name) -> Self::Output {
+                #name::new(self.value() - rhs.value())
+            }
+        }
+
+
+        impl std::ops::SubAssign<Self> for #name {
             fn sub_assign(&mut self, rhs: Self) {
                 self.0 -= rhs.value()
             }
         }
 
-        impl std::ops::Mul for #name {
-            type Output = Self;
-            fn mul(self, rhs: Self) -> Self::Output {
-                Self(self.value() * rhs.value())
+        impl std::ops::SubAssign<&Self> for #name {
+            fn sub_assign(&mut self, rhs: &Self) {
+                self.0 -= rhs.value()
             }
         }
 
-        impl std::ops::MulAssign for #name {
+        impl std::ops::Mul<Self> for #name {
+            type Output = Self;
+            fn mul(self, rhs: Self) -> Self::Output {
+                Self::new(self.value() * rhs.value())
+            }
+        }
+
+        impl std::ops::Mul<&Self> for #name {
+            type Output = Self;
+            fn mul(self, rhs: &Self) -> Self::Output {
+                Self::new(self.value() * rhs.value())
+            }
+        }
+
+        impl<'a> std::ops::Mul<#name> for &'a #name {
+            type Output = #name;
+            fn mul(self, rhs: #name) -> Self::Output {
+                #name::new(self.value() * rhs.value())
+            }
+        }
+
+        impl<'a> std::ops::Mul<&#name> for &'a #name {
+            type Output = #name;
+            fn mul(self, rhs: &#name) -> Self::Output {
+                #name::new(self.value() * rhs.value())
+            }
+        }
+
+        impl std::ops::MulAssign<Self> for #name {
             fn mul_assign(&mut self, rhs: Self) {
                 self.0 *= rhs.value()
             }
         }
 
-        impl std::ops::Div for #name {
-            type Output = Self;
-            fn div(self, rhs: Self) -> Self::Output {
-                Self(self.value() / rhs.value())
+        impl std::ops::MulAssign<&Self> for #name {
+            fn mul_assign(&mut self, rhs: &Self) {
+                self.0 *= rhs.value()
             }
         }
 
-        impl std::ops::DivAssign for #name {
+        impl std::ops::Div<Self> for #name {
+            type Output = Self;
+            fn div(self, rhs: Self) -> Self::Output {
+                Self::new(self.value() / rhs.value())
+            }
+        }
+
+        impl std::ops::Div<&Self> for #name {
+            type Output = Self;
+            fn div(self, rhs: &Self) -> Self::Output {
+                Self::new(self.value() / rhs.value())
+            }
+        }
+
+        impl<'a> std::ops::Div<#name> for &'a #name {
+            type Output = #name;
+            fn div(self, rhs: #name) -> Self::Output {
+                #name::new(self.value() / rhs.value())
+            }
+        }
+
+        impl<'a> std::ops::Div<&#name> for &'a #name {
+            type Output = #name;
+            fn div(self, rhs: &#name) -> Self::Output {
+                #name::new(self.value() / rhs.value())
+            }
+        }
+
+        impl std::ops::DivAssign<Self> for #name {
             fn div_assign(&mut self, rhs: Self) {
                 self.0 /= rhs.value()
+            }
+        }
+
+        impl std::ops::DivAssign<&Self> for #name {
+            fn div_assign(&mut self, rhs: &Self) {
+                self.0 /= rhs.value()
+            }
+        }
+
+        impl std::ops::Rem<Self> for #name {
+            type Output = Self;
+            fn rem(self, rhs: Self) -> Self::Output {
+                Self::new(self.value() % rhs.value())
+            }
+        }
+
+        impl std::ops::Rem<&Self> for #name {
+            type Output = Self;
+            fn rem(self, rhs: &Self) -> Self::Output {
+                Self::new(self.value() % rhs.value())
+            }
+        }
+
+        impl<'a> std::ops::Rem<#name> for &'a #name {
+            type Output = #name;
+            fn rem(self, rhs: #name) -> Self::Output {
+                #name::new(self.value() % rhs.value())
+            }
+        }
+
+        impl<'a> std::ops::Rem<&#name> for &'a #name {
+            type Output = #name;
+            fn rem(self, rhs: &#name) -> Self::Output {
+                #name::new(self.value() % rhs.value())
+            }
+        }
+
+        impl std::ops::RemAssign<Self> for #name {
+            fn rem_assign(&mut self, rhs: Self) {
+                self.0 %= rhs.value()
+            }
+        }
+
+        impl std::ops::RemAssign<&Self> for #name {
+            fn rem_assign(&mut self, rhs: &Self) {
+                self.0 %= rhs.value()
             }
         }
     }

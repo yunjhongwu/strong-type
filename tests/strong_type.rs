@@ -3,6 +3,7 @@ mod tests {
     use std::any::Any;
     use std::collections::HashSet;
     use std::fmt::Display;
+    use std::ops::Neg;
     use strong_type::{StrongNumericType, StrongType};
 
     #[test]
@@ -83,12 +84,33 @@ mod tests {
 
         let x = Second::new(2);
         let mut y = Second::new(3);
+        let x_ref = &x;
+        let y_ref = &y;
+
         assert_eq!(y + x, Second::new(5));
+        assert_eq!(y + x_ref, Second::new(5));
+        assert_eq!(y_ref + x, Second::new(5));
+        assert_eq!(y_ref + x_ref, Second::new(5));
+
         assert_eq!(y - x, Second::new(1));
+        assert_eq!(y - x_ref, Second::new(1));
+        assert_eq!(y_ref - x, Second::new(1));
+        assert_eq!(y_ref - x_ref, Second::new(1));
+
         assert_eq!(y * x, Second::new(6));
+        assert_eq!(y * x_ref, Second::new(6));
+        assert_eq!(y_ref * x, Second::new(6));
+        assert_eq!(y_ref * x_ref, Second::new(6));
+
         assert_eq!(y / x, Second::new(1));
-        assert!(x < y);
-        assert!(y >= x);
+        assert_eq!(y / x_ref, Second::new(1));
+        assert_eq!(y_ref / x, Second::new(1));
+        assert_eq!(y_ref / x_ref, Second::new(1));
+
+        assert_eq!(y % x, Second::new(1));
+        assert_eq!(y % x_ref, Second::new(1));
+        assert_eq!(y_ref % x, Second::new(1));
+        assert_eq!(y_ref % x_ref, Second::new(1));
 
         y += x;
         assert_eq!(y, Second::new(5));
@@ -98,13 +120,74 @@ mod tests {
         assert_eq!(y, Second::new(6));
         y /= x;
         assert_eq!(y, Second::new(3));
+        y %= x;
+        assert_eq!(y, Second::new(1));
+
+        let mut y = Second::new(3);
+        y += x_ref;
+        assert_eq!(y, Second::new(5));
+        y -= x_ref;
+        assert_eq!(y, Second::new(3));
+        y *= x_ref;
+        assert_eq!(y, Second::new(6));
+        y /= x_ref;
+        assert_eq!(y, Second::new(3));
+        y %= x_ref;
+        assert_eq!(y, Second::new(1));
 
         let z = Second::new(2);
 
-        assert_eq!(-z, Second::new(-2));
+        assert_eq!(z.neg(), Second::new(-2));
+    }
+
+    #[test]
+    fn test_comparison() {
+        #[derive(StrongType)]
+        struct Second(i32);
+
+        let x = Second::new(2);
+        let y = Second::new(3);
+        let z = Second::new(2);
+
+        assert!(x < y);
+        assert!(x <= y);
+        assert!(x <= z);
+        assert!(y > x);
+        assert!(y >= x);
+        assert!(y >= z);
+        assert!(x == z);
+        assert!(x != y);
+
+        #[derive(StrongType)]
+        struct Meter(f64);
+
+        let x = Meter::new(2.0);
+        let y = Meter::new(3.0);
+        let z = Meter::new(2.0);
+
+        assert!(x < y);
+        assert!(x <= y);
+        assert!(x <= z);
+        assert!(y > x);
+        assert!(y >= x);
+        assert!(y >= z);
+        assert!(x == z);
+        assert!(x != y);
+    }
+
+    #[test]
+    fn test_min_max() {
+        #[derive(StrongType)]
+        struct Second(i32);
 
         assert_eq!(Second::max().value(), i32::MAX);
         assert_eq!(Second::min().value(), i32::MIN);
+
+        #[derive(StrongType)]
+        struct Meter(f64);
+
+        assert_eq!(Meter::max().value(), f64::MAX);
+        assert_eq!(Meter::min().value(), f64::MIN);
     }
 
     #[test]
@@ -112,30 +195,62 @@ mod tests {
         #[derive(StrongNumericType)]
         struct Second(f64);
 
-        let x = Second::new(2.5);
-        let mut y = Second::new(3.5);
-        assert_eq!(y + x, Second::new(6.0));
+        let x = Second::new(2.0);
+        let mut y = Second::new(3.0);
+        let x_ref = &x;
+        let y_ref = &y;
+
+        assert_eq!(y + x, Second::new(5.0));
+        assert_eq!(y + x_ref, Second::new(5.0));
+        assert_eq!(y_ref + x, Second::new(5.0));
+        assert_eq!(y_ref + x_ref, Second::new(5.0));
+
         assert_eq!(y - x, Second::new(1.0));
-        assert_eq!(y * x, Second::new(8.75));
-        assert_eq!(y / x, Second::new(1.4));
-        assert!(x < y);
-        assert!(y >= x);
+        assert_eq!(y - x_ref, Second::new(1.0));
+        assert_eq!(y_ref - x, Second::new(1.0));
+        assert_eq!(y_ref - x_ref, Second::new(1.0));
+
+        assert_eq!(y * x, Second::new(6.0));
+        assert_eq!(y * x_ref, Second::new(6.0));
+        assert_eq!(y_ref * x, Second::new(6.0));
+        assert_eq!(y_ref * x_ref, Second::new(6.0));
+
+        assert_eq!(y / x, Second::new(1.5));
+        assert_eq!(y / x_ref, Second::new(1.5));
+        assert_eq!(y_ref / x, Second::new(1.5));
+        assert_eq!(y_ref / x_ref, Second::new(1.5));
+
+        assert_eq!(y % x, Second::new(1.0));
+        assert_eq!(y % x_ref, Second::new(1.0));
+        assert_eq!(y_ref % x, Second::new(1.0));
+        assert_eq!(y_ref % x_ref, Second::new(1.0));
 
         y += x;
-        assert_eq!(y, Second::new(6.0));
+        assert_eq!(y, Second::new(5.0));
         y -= x;
-        assert_eq!(y, Second::new(3.5));
+        assert_eq!(y, Second::new(3.0));
         y *= x;
-        assert_eq!(y, Second::new(8.75));
+        assert_eq!(y, Second::new(6.0));
         y /= x;
-        assert_eq!(y, Second::new(3.5));
+        assert_eq!(y, Second::new(3.0));
+        y %= x;
+        assert_eq!(y, Second::new(1.0));
+
+        let mut y = Second::new(3.0);
+        y += x_ref;
+        assert_eq!(y, Second::new(5.0));
+        y -= x_ref;
+        assert_eq!(y, Second::new(3.0));
+        y *= x_ref;
+        assert_eq!(y, Second::new(6.0));
+        y /= x_ref;
+        assert_eq!(y, Second::new(3.0));
+        y %= x_ref;
+        assert_eq!(y, Second::new(1.0));
 
         let z = Second::new(2.0);
 
-        assert_eq!(-z, Second::new(-2.0));
-
-        assert_eq!(Second::max().value(), f64::MAX);
-        assert_eq!(Second::min().value(), f64::MIN);
+        assert_eq!(z.neg(), Second::new(-2.0));
     }
 
     #[test]
