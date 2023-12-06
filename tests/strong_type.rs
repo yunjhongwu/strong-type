@@ -284,14 +284,32 @@ mod tests {
     }
 
     #[test]
-    fn test_bool_negate() {
-        #[derive(StrongType)]
+    fn test_bool_ops() {
+        #[derive(StrongNumericType)]
         struct IsTrue(bool);
-        let is_true = IsTrue(true);
 
-        assert!(is_true.value());
-        assert!(!(!is_true).value());
-        assert!((!!is_true).value());
+        let x = IsTrue::new(true);
+        let y = IsTrue::new(false);
+        let x_ref = &x;
+        let y_ref = &y;
+
+        assert_eq!(x & y, IsTrue::new(false));
+        assert_eq!(x | y, IsTrue::new(true));
+        assert_eq!(x ^ y, IsTrue::new(true));
+
+        assert_eq!(x_ref & y, IsTrue::new(false));
+        assert_eq!(x_ref | y, IsTrue::new(true));
+        assert_eq!(x_ref ^ y, IsTrue::new(true));
+
+        assert_eq!(x & y_ref, IsTrue::new(false));
+        assert_eq!(x | y_ref, IsTrue::new(true));
+        assert_eq!(x ^ y_ref, IsTrue::new(true));
+
+        assert_eq!(x_ref & y_ref, IsTrue::new(false));
+        assert_eq!(x_ref | y_ref, IsTrue::new(true));
+
+        assert_eq!(!x, IsTrue::new(false));
+        assert_eq!(!x_ref, IsTrue::new(false));
     }
 
     #[test]
