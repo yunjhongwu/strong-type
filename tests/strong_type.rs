@@ -141,6 +141,7 @@ mod tests {
     }
 
     #[test]
+
     fn test_comparison() {
         #[derive(StrongType)]
         struct Second(i32);
@@ -155,8 +156,8 @@ mod tests {
         assert!(y > x);
         assert!(y >= x);
         assert!(y >= z);
-        assert!(x == z);
-        assert!(x != y);
+        assert_eq!(x, z);
+        assert_ne!(x, y);
 
         #[derive(StrongType)]
         struct Meter(f64);
@@ -171,8 +172,8 @@ mod tests {
         assert!(y > x);
         assert!(y >= x);
         assert!(y >= z);
-        assert!(x == z);
-        assert!(x != y);
+        assert_eq!(x, z);
+        assert_ne!(x, y);
     }
 
     #[test]
