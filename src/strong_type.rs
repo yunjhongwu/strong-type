@@ -5,12 +5,16 @@ use crate::detail::{
 };
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{Data, DeriveInput};
+use syn::{Data, DeriveInput, Fields, Visibility};
 
 fn is_struct_valid(input: &DeriveInput) -> bool {
     if let Data::Struct(data_struct) = &input.data {
-        if let syn::Fields::Unnamed(fields_unnamed) = &data_struct.fields {
-            return fields_unnamed.unnamed.len() == 1;
+        if let Fields::Unnamed(fields_unnamed) = &data_struct.fields {
+            return (fields_unnamed.unnamed.len() == 1)
+                && matches!(
+                    fields_unnamed.unnamed.first().unwrap().vis,
+                    Visibility::Inherited
+                );
         }
     }
     false
@@ -18,7 +22,7 @@ fn is_struct_valid(input: &DeriveInput) -> bool {
 
 pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> TokenStream {
     if !is_struct_valid(&input) {
-        panic!("Strong type must be a tuple struct with one field.");
+        panic!("Strong type must be a tuple struct with one private field.");
     }
 
     let name = &input.ident;
