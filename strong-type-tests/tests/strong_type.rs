@@ -2,11 +2,16 @@
 mod tests {
     use std::any::Any;
     use std::collections::HashSet;
-    use std::fmt::{Debug, Display};
+    use std::fmt::Display;
     use std::ops::Neg;
     use strong_type::{StrongNumericType, StrongType};
 
-    fn test_type<T: Debug + Clone + Send + Sync + Default + PartialEq>(default_value: T) {
+    fn are_basic_traits_implemented<
+        T: std::fmt::Debug + Clone + Send + Sync + Default + PartialEq,
+    >() {
+    }
+    fn test_type<T: StrongType>(default_value: T) {
+        are_basic_traits_implemented::<T>();
         assert_eq!(T::default(), default_value);
     }
 

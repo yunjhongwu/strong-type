@@ -1,0 +1,12 @@
+[package]
+name = "strong-type-tests"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+strong-type = { path = "../strong-type" }
+
+[[test]]
+name = "unit-test"
+path = "tests/tests.rs"
