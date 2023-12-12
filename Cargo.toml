@@ -1,22 +1,10 @@
-[package]
-name = "strong-type"
-description = "Procedural macros for naming and strong-typing pritimives and strings"
-version = "0.3.0"
-edition = "2021"
+[workspace]
+members = [
+    "strong-type",
+    "strong-type-derive",
+    "strong-type-tests"
+]
+resolver = "2"
 
-license = "MIT OR Apache-2.0"
-keywords = ["primitive", "string", "strongly-typed"]
-repository = "https://github.com/yunjhongwu/strong-type"
-readme = "README.md"
-
-[lib]
-proc-macro = true
-
-[dependencies]
-proc-macro2 = "1"
-quote = "1"
-syn = "2"
-
-[[test]]
-name = "unit-test"
-path = "tests/tests.rs"
+[patch.crates-io]
+strong-type = { path = "strong-type" }

@@ -1,0 +1,14 @@
+[package]
+name = "strong-type"
+description = "Procedural macros for naming and strong-typing pritimives and strings"
+version = "0.4.0"
+edition = "2021"
+
+license = "MIT OR Apache-2.0"
+keywords = ["primitive", "string", "strongly-typed"]
+repository = "https://github.com/yunjhongwu/strong-type"
+readme = "../README.md"
+
+[dependencies]
+strong-type-derive = { path = "../strong-type-derive" }
+
