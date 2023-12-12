@@ -57,6 +57,20 @@ assert_eq!(x.type_id(), y.type_id()); // Same type: Second
 assert_ne!(y.type_id(), z.type_id()); // Different types: Second versus Minute
 ```
 
+#### Hashable if the underlying type implements `Hash`:
+
+```rust
+use std::collections::HashSet;
+
+#[derive(StrongType)]
+struct Tag(String);
+
+let mut map = HashSet::<Tag>::new();
+map.insert(Tag::new("dev"));
+map.insert(Tag::new("prod"));
+assert_eq!(map.len(), 2);
+```
+
 #### Named integer type with arithmetic operations:
 
 ```rust
@@ -67,9 +81,11 @@ struct Second(i32);
 
 let x = Second::new(2);
 let y = Second::new(3);
+let z = Second::default();
 
 assert_eq!(x.value(), 2);
 assert_eq!(y.value(), 3);
+assert_eq!(z.value(), 0);
 assert!(x < y);
 assert!(y >= x);
 assert_eq!(x + y, Second(5));
