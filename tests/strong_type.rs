@@ -2,79 +2,83 @@
 mod tests {
     use std::any::Any;
     use std::collections::HashSet;
-    use std::fmt::Display;
+    use std::fmt::{Debug, Display};
     use std::ops::Neg;
     use strong_type::{StrongNumericType, StrongType};
+
+    fn test_type<T: Debug + Clone + Send + Sync + Default + PartialEq>(default_value: T) {
+        assert_eq!(T::default(), default_value);
+    }
 
     #[test]
     fn test_basic() {
         #[derive(StrongNumericType)]
         struct NamedI8(i8);
-        let _ = NamedI8::new(1);
+        test_type::<NamedI8>(NamedI8::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedI16(i16);
-        let _ = NamedI16::new(1);
+        test_type::<NamedI16>(NamedI16::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedI32(i32);
-        let _ = NamedI32::new(1);
+        test_type::<NamedI32>(NamedI32::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedI64(i64);
-        let _ = NamedI64::new(1);
+        test_type::<NamedI64>(NamedI64::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedI128(i128);
-        let _ = NamedI128::new(1);
+        test_type::<NamedI128>(NamedI128::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedISize(isize);
-        let _ = NamedISize::new(1);
+        test_type::<NamedISize>(NamedISize::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedU8(u8);
-        let _ = NamedU8::new(1);
+        test_type::<NamedU8>(NamedU8::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedU16(u16);
-        let _ = NamedU16::new(1);
+        test_type::<NamedU16>(NamedU16::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedU32(u32);
-        let _ = NamedU32::new(1);
+        test_type::<NamedU32>(NamedU32::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedU64(u64);
-        let _ = NamedU64::new(1);
+        test_type::<NamedU64>(NamedU64::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedU128(u128);
-        let _ = NamedU128::new(1);
+        test_type::<NamedU128>(NamedU128::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedUSize(usize);
-        let _ = NamedUSize::new(1);
+        test_type::<NamedUSize>(NamedUSize::new(0));
 
         #[derive(StrongNumericType)]
         struct NamedF32(f32);
-        let _ = NamedF32::new(1.0);
+        test_type::<NamedF32>(NamedF32::new(0.0));
 
         #[derive(StrongNumericType)]
         struct NamedF64(f64);
-        let _ = NamedF64::new(1.0);
+        test_type::<NamedF64>(NamedF64::new(0.0));
 
         #[derive(StrongNumericType)]
         struct NamedBool(bool);
-        let _ = NamedBool::new(true);
+        test_type::<NamedBool>(NamedBool::new(false));
 
         #[derive(StrongType)]
         struct NamedChar(char);
-        let _ = NamedChar::new('a');
+        test_type::<NamedChar>(NamedChar::new('\0'));
 
         #[derive(StrongType)]
         struct NamedString(String);
-        let _ = NamedString::new("string");
+        test_type::<NamedString>(NamedString::new(""));
     }
 
     #[test]

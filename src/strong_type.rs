@@ -30,7 +30,7 @@ pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> T
     let group = get_type_group(value_type);
 
     let mut ast = quote!();
-    ast.extend(implement_basic(name));
+    ast.extend(implement_basic(name, value_type));
     if !custom_display(&input) {
         ast.extend(implement_display(name));
     };
