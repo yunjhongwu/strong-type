@@ -9,6 +9,8 @@ pub(crate) fn implement_basic_string(name: &syn::Ident) -> TokenStream {
             }
         }
 
+        // TODO[v0.5.0]: Remove From
+        #[deprecated(since = "0.4.0")]
         impl From<&str> for #name {
             fn from(value: &str) -> Self {
                 Self(String::from(value))

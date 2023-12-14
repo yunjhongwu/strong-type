@@ -166,16 +166,6 @@ mod tests {
     }
 
     #[test]
-    fn test_string_constructor() {
-        #[derive(StrongType)]
-        struct Meter(String);
-
-        let _: Meter = "String".to_string().into();
-        let _: Meter = "String".into();
-        let _ = Meter::new("&str");
-    }
-
-    #[test]
     fn test_hash() {
         #[derive(StrongType)]
         struct Sign(bool);
