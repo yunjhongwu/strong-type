@@ -1,7 +1,7 @@
 use crate::detail::{
-    custom_display, get_type_group, get_type_ident, implement_arithmetic, implement_basic,
-    implement_basic_primitive, implement_basic_string, implement_bool_ops, implement_display,
-    implement_hash, implement_min_max, implement_nan, implement_negate,
+    get_type_group, get_type_ident, has_custom_display, has_numeric, implement_arithmetic,
+    implement_basic, implement_basic_primitive, implement_basic_string, implement_bool_ops,
+    implement_display, implement_hash, implement_min_max, implement_nan, implement_negate,
     implement_strong_type_trait, UnderlyingTypeGroup,
 };
 use proc_macro2::TokenStream;
@@ -22,6 +22,7 @@ fn is_struct_valid(input: &DeriveInput) -> bool {
 }
 
 pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> TokenStream {
+    // TODO[v0.5.0]: Remove impl_arithmetic
     if !is_struct_valid(&input) {
         panic!("Strong type must be a tuple struct with one private field.");
     }
@@ -32,7 +33,7 @@ pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> T
 
     let mut ast = quote!();
     ast.extend(implement_basic(name, value_type));
-    if !custom_display(&input) {
+    if !has_custom_display(&input) {
         ast.extend(implement_display(name));
     };
 
@@ -61,7 +62,8 @@ pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> T
         }
     }
 
-    if impl_arithmetic {
+    if has_numeric(&input) || impl_arithmetic {
+        // TODO[v0.5.0]: Remove impl_arithmetic
         match &group {
             UnderlyingTypeGroup::Int | UnderlyingTypeGroup::Float => {
                 ast.extend(implement_arithmetic(name));
