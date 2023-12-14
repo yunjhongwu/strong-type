@@ -23,8 +23,21 @@ pub(crate) fn implement_basic(name: &syn::Ident, value_type: &syn::Ident) -> Tok
             }
         }
 
+        #[allow(clippy::incorrect_partial_ord_impl_on_ord_type)]
+        impl std::cmp::PartialOrd for #name {
+            fn partial_cmp(&self, rhs: &Self) -> Option<std::cmp::Ordering> {
+                 self.value().partial_cmp(&rhs.value())
+            }
+        }
+
         unsafe impl Send for #name {}
 
         unsafe impl Sync for #name {}
+
+        impl From<#value_type> for #name {
+            fn from(value: #value_type) -> Self {
+                Self(value)
+            }
+        }
     }
 }

@@ -8,6 +8,10 @@ pub(crate) fn implement_strong_type_trait(
     quote! {
         impl StrongType for #name {
             type UnderlyingType = #value_type;
+
+            fn new(value: impl Into<#value_type>) -> Self {
+                Self(value.into())
+            }
         }
     }
 }
