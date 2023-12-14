@@ -7,8 +7,8 @@ mod tests {
     fn test_display() {
         #[derive(StrongType)]
         struct Meter(i32);
-        assert_eq!(format!("{}", Meter(-2)), "Meter(-2)");
-        assert_eq!(format!("{:?}", Meter(-2)), "Meter { value: -2 }");
+        assert_eq!(format!("{}", Meter::new(-2)), "Meter(-2)");
+        assert_eq!(format!("{:?}", Meter::new(-2)), "Meter { value: -2 }");
 
         #[derive(StrongType)]
         #[custom_display]
@@ -21,7 +21,7 @@ mod tests {
         }
         assert_eq!(format!("{}", Mile(std::f64::consts::E)), "Mile(2.72)");
         assert_eq!(
-            format!("{:?}", Mile(std::f64::consts::E)),
+            format!("{:?}", Mile::new(std::f64::consts::E)),
             format!("Mile {{ value: {} }}", std::f64::consts::E)
         );
     }

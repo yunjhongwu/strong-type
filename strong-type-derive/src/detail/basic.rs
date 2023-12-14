@@ -34,6 +34,8 @@ pub(crate) fn implement_basic(name: &syn::Ident, value_type: &syn::Ident) -> Tok
 
         unsafe impl Sync for #name {}
 
+        // TODO[v0.5.0]: Remove From
+        #[deprecated(since = "0.4.0")]
         impl From<#value_type> for #name {
             fn from(value: #value_type) -> Self {
                 Self(value)
