@@ -4,7 +4,7 @@ mod tests {
     use std::collections::HashSet;
     use std::fmt::Display;
     use std::ops::Neg;
-    use strong_type::{StrongNumericType, StrongType};
+    use strong_type::StrongType;
 
     fn are_basic_traits_implemented<
         T: std::fmt::Debug + Clone + Send + Sync + Default + PartialEq,
@@ -17,63 +17,63 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedI8(i8);
         test_type::<NamedI8>(NamedI8::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedI16(i16);
         test_type::<NamedI16>(NamedI16::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedI32(i32);
         test_type::<NamedI32>(NamedI32::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedI64(i64);
         test_type::<NamedI64>(NamedI64::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedI128(i128);
         test_type::<NamedI128>(NamedI128::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedISize(isize);
         test_type::<NamedISize>(NamedISize::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedU8(u8);
         test_type::<NamedU8>(NamedU8::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedU16(u16);
         test_type::<NamedU16>(NamedU16::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedU32(u32);
         test_type::<NamedU32>(NamedU32::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedU64(u64);
         test_type::<NamedU64>(NamedU64::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedU128(u128);
         test_type::<NamedU128>(NamedU128::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedUSize(usize);
         test_type::<NamedUSize>(NamedUSize::new(0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedF32(f32);
         test_type::<NamedF32>(NamedF32::new(0.0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedF64(f64);
         test_type::<NamedF64>(NamedF64::new(0.0));
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct NamedBool(bool);
         test_type::<NamedBool>(NamedBool::new(false));
 
@@ -88,7 +88,8 @@ mod tests {
 
     #[test]
     fn test_int_arithmetic() {
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
+        #[numeric]
         struct Second(i32);
 
         let x = Second::new(2);
@@ -202,7 +203,8 @@ mod tests {
 
     #[test]
     fn test_float_arithmetic() {
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
+        #[numeric]
         struct Second(f64);
 
         let x = Second::new(2.0);
@@ -295,7 +297,8 @@ mod tests {
 
     #[test]
     fn test_bool_ops() {
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
+        #[numeric]
         struct IsTrue(bool);
 
         let x = IsTrue::new(true);
@@ -334,12 +337,12 @@ mod tests {
 
     #[test]
     fn test_display() {
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         struct Meter(i32);
         assert_eq!(format!("{}", Meter(-2)), "Meter(-2)");
         assert_eq!(format!("{:?}", Meter(-2)), "Meter { value: -2 }");
 
-        #[derive(StrongNumericType)]
+        #[derive(StrongType)]
         #[custom_display]
         struct Mile(f64);
 

@@ -12,9 +12,13 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 ```
 
 ## Features
-- `StrongType`: Create a named strong type. The macro automatically implement common traits like `Clone`, `Debug`, `Default`, `PartialEq`, `PartialOrd`, `Send`, `Sync`, and `Display` (unless the `custom_display` attribute is used to override it). Additionally, depending on the underlying data type, strong-typed structs may also implement `Copy`, `Eq`, `Ord`, `Hash`. For example, if the underlying type is a primitive data type like `i32` or `bool`, these additional traits will be implemented. This allows the strong types to inherit useful behaviors from their underlying types, while still maintaining their distinct identity at the type level.
-- `StrongNumericType`: Extend `StrongType` with arithmetic/logical operations.
-- `custom_display`: Provides flexibility for users to manually implement `Display` instead of using the default display format.
+
+- Derive trait:
+  - `StrongType`: Create a named strong type. The macro automatically implement common traits like `Clone`, `Debug`, `Default`, `PartialEq`, `PartialOrd`, `Send`, `Sync`, and `Display` (unless the `custom_display` attribute is used to override it). Additionally, depending on the underlying data type, strong-typed structs may also implement `Copy`, `Eq`, `Ord`, `Hash`. For example, if the underlying type is a primitive data type like `i32` or `bool`, these additional traits will be implemented. This allows the strong types to inherit useful behaviors from their underlying types, while still maintaining their distinct identity at the type level.
+
+- Attributes:
+  - `numeric`: Extend `StrongType` with arithmetic/logical operations.
+  - `custom_display`: Provides flexibility for users to manually implement `Display` instead of using the default display format.
 
 ## Installation
 Add `strong-type` to your `Cargo.toml`:
@@ -24,14 +28,12 @@ strong-type = "*" # Using the latest version or specify a version number
 ```
 
 ## Supported underlying types:
- - Both `StrongType` and `StrongNumericType`:
-   - Integer types: `i8`, `i16`, `i32`, `i64`, `i128`, `isize`
-   - Unsigned integer types: `u8`, `u16`, `u32`, `u64`, `u128`, `usize`
-   - Floating-point types: `f32`, `f64`
-   - Boolean type: `bool`
- - Only `StrongType`:
-   - `char`
-   - `String`
+  - Integer types: `i8`, `i16`, `i32`, `i64`, `i128`, `isize`
+  - Unsigned integer types: `u8`, `u16`, `u32`, `u64`, `u128`, `usize`
+  - Floating-point types: `f32`, `f64`
+  - Boolean type: `bool`
+  - `char`
+  - `String`
 
 ## Examples
 #### Creating a named strong type:
@@ -82,9 +84,10 @@ assert_eq!(map.len(), 2);
 #### Named integer type with arithmetic operations:
 
 ```rust
-use strong_type::StrongNumericType;
+use strong_type::StrongType;
 
-#[derive(StrongNumericType)]
+#[derive(StrongType)]
+#[numeric]
 struct Second(i32);
 
 let x = Second::new(2);
@@ -102,9 +105,10 @@ assert_eq!(x + y, Second(5));
 #### Named bool type with logical operations:
 
 ```rust
-use strong_type::StrongNumericType;
+use strong_type::StrongType;
 
-#[derive(StrongNumericType)]
+#[derive(StrongType)]
+#[numeric]
 struct IsTrue(bool);
 
 let x = IsTrue::new(true);
@@ -120,9 +124,9 @@ assert_eq!(!x, IsTrue::new(false));
 
 ```rust
 use std::fmt::{Display, Formatter, Result};
-use strong_type::StrongNumericType;
+use strong_type::StrongType;
 
-#[derive(StrongNumericType)]
+#[derive(StrongType)]
 #[custom_display]
 struct Second(f64);
 
