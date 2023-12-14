@@ -10,5 +10,11 @@ pub(crate) fn implement_basic_primitive(name: &syn::Ident, value_type: &syn::Ide
         }
 
         impl Copy for #name {}
+
+        impl Clone for #name {
+            fn clone(&self) -> Self {
+                *self
+            }
+        }
     }
 }

@@ -14,5 +14,11 @@ pub(crate) fn implement_basic_string(name: &syn::Ident) -> TokenStream {
                 Self(String::from(value))
             }
         }
+
+        impl Clone for #name {
+            fn clone(&self) -> Self {
+                Self(self.0.clone())
+            }
+        }
     }
 }

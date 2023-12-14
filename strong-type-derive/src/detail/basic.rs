@@ -30,12 +30,6 @@ pub(crate) fn implement_basic(name: &syn::Ident, value_type: &syn::Ident) -> Tok
             }
         }
 
-        impl Clone for #name {
-            fn clone(&self) -> Self {
-                Self(self.0.clone())
-            }
-        }
-
         unsafe impl Send for #name {}
 
         unsafe impl Sync for #name {}

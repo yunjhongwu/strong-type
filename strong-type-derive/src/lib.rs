@@ -16,7 +16,7 @@ pub fn strong_type(input: TokenStream) -> TokenStream {
 #[proc_macro_derive(StrongNumericType, attributes(custom_display))]
 #[deprecated(
     since = "0.4.0",
-    note = "Use #[derive(StrongType)] with #[numeric] instead"
+    note = "Use #[derive(StrongType)] with #[numeric] instead."
 )]
 pub fn strong_numeric_type(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
