@@ -2,7 +2,7 @@ use crate::detail::{
     get_type_group, get_type_ident, has_custom_display, has_numeric, implement_arithmetic,
     implement_basic, implement_basic_primitive, implement_basic_string, implement_bool_ops,
     implement_display, implement_hash, implement_min_max, implement_nan, implement_negate,
-    implement_strong_type_trait, UnderlyingTypeGroup,
+    UnderlyingTypeGroup,
 };
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -76,7 +76,6 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
             _ => panic!("Non-numeric type: {value_type}"),
         }
     }
-    ast.extend(implement_strong_type_trait(name, value_type));
 
     ast
 }
