@@ -21,8 +21,7 @@ fn is_struct_valid(input: &DeriveInput) -> bool {
     false
 }
 
-pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> TokenStream {
-    // TODO[v0.5.0]: Remove impl_arithmetic
+pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
     if !is_struct_valid(&input) {
         panic!("Strong type must be a tuple struct with one private field.");
     }
@@ -62,8 +61,7 @@ pub(super) fn expand_strong_type(input: DeriveInput, impl_arithmetic: bool) -> T
         }
     }
 
-    if has_numeric(&input) || impl_arithmetic {
-        // TODO[v0.5.0]: Remove impl_arithmetic
+    if has_numeric(&input) {
         match &group {
             UnderlyingTypeGroup::Int | UnderlyingTypeGroup::Float => {
                 ast.extend(implement_arithmetic(name));
