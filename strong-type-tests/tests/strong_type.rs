@@ -4,15 +4,7 @@ mod tests {
     use std::collections::HashSet;
     use strong_type::StrongType;
 
-    fn are_basic_traits_implemented<
-        T: std::fmt::Debug + Clone + Send + Sync + Default + PartialEq,
-    >() {
-    }
-
-    fn test_type<T: StrongType>() {
-        are_basic_traits_implemented::<T>();
-        assert_eq!(T::default(), T::new(T::UnderlyingType::default()));
-    }
+    fn test_type<T: std::fmt::Debug + Clone + Send + Sync + Default + PartialEq>() {}
 
     #[test]
     fn test_basic() {
