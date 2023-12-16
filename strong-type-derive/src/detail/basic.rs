@@ -7,12 +7,6 @@ pub(crate) fn implement_basic(name: &syn::Ident, value_type: &syn::Ident) -> Tok
             type UnderlyingType = #value_type;
         }
 
-        impl #name {
-            pub fn new(value: impl Into<#value_type>) -> Self {
-                Self(value.into())
-            }
-        }
-
         impl std::fmt::Debug for #name {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 f.debug_struct(stringify!(#name))
