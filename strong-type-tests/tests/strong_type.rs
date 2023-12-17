@@ -93,6 +93,40 @@ mod tests {
     }
 
     #[test]
+    fn test_constructor() {
+        #[derive(StrongType)]
+        struct Second(i32);
+        let _ = Second(1);
+        let _ = Second::new(1);
+
+        #[derive(StrongType)]
+        struct Days(u32);
+        let _ = Days(1);
+        let _ = Days::new(1);
+
+        #[derive(StrongType)]
+        struct Value(f64);
+        let _ = Value(1.0);
+        let _ = Value::new(1.0);
+
+        #[derive(StrongType)]
+        struct Flag(bool);
+        let _ = Flag(true);
+        let _ = Flag::new(false);
+
+        #[derive(StrongType)]
+        struct Level(char);
+        let _ = Level('A');
+        let _ = Level::new('A');
+
+        #[derive(StrongType)]
+        struct Name(String);
+        let _ = Name("Tim".to_string());
+        let _ = Name::new("Tim");
+        let _ = Name::new("Tim".to_string());
+    }
+
+    #[test]
     fn test_comparison() {
         #[derive(StrongType)]
         struct Second(i32);
