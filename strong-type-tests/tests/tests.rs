@@ -1,3 +1,3 @@
+mod auto_operators;
 mod display;
-mod numeric;
 mod strong_type;

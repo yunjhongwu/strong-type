@@ -1,5 +1,5 @@
 use crate::detail::{
-    get_type_group, get_type_ident, has_custom_display, has_numeric, implement_arithmetic,
+    get_type_group, get_type_ident, has_auto_operators, has_custom_display, implement_arithmetic,
     implement_basic, implement_basic_primitive, implement_basic_string, implement_bool_ops,
     implement_display, implement_hash, implement_min_max, implement_nan, implement_negate,
     UnderlyingTypeGroup,
@@ -61,7 +61,7 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
         }
     }
 
-    if has_numeric(&input) {
+    if has_auto_operators(&input) {
         match &group {
             UnderlyingTypeGroup::Int | UnderlyingTypeGroup::Float => {
                 ast.extend(implement_arithmetic(name));
@@ -73,7 +73,7 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
             UnderlyingTypeGroup::Bool => {
                 ast.extend(implement_bool_ops(name));
             }
-            _ => panic!("Non-numeric type: {value_type}"),
+            _ => {}
         }
     }
 
