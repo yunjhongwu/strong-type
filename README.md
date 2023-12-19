@@ -13,12 +13,15 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 
 ## Features
 
-- Derive trait:
-  - `StrongType`: Create a named strong type. The macro automatically implement common traits like `Clone`, `Debug`, `Default`, `PartialEq`, `PartialOrd`, `Send`, `Sync`, and `Display` (unless the `custom_display` attribute is used to override it). Additionally, depending on the underlying data type, strong-typed structs may also implement `Copy`, `Eq`, `Ord`, `Hash`. For example, if the underlying type is a primitive data type like `i32` or `bool`, these additional traits will be implemented. This allows the strong types to inherit useful behaviors from their underlying types, while still maintaining their distinct identity at the type level.
+- **Derive trait:**
+  - `StrongType`: Create a named strong type. 
+     - The macro automatically implement common traits like `Clone`, `Debug`, `Default`, `PartialEq`, `PartialOrd`, `Send`, and `Sync`. It also implements `Display` by default, unless overridden by the custom_display attribute. 
+     - Conditionally, based on the underlying data type, traits like `Copy`, `Eq`, `Ord`, `Hash` may also be implemented. For primitive data types like `i32` or `bool`, these additional traits will be automatically included.
+     - Numeric types (integer and floating-point) additionally implement methods like `min()`, `max()`, and, for floating-point types, `nan()`.
 
-- Attributes:
-  - `numeric`: Extend `StrongType` with arithmetic/logical operations.
-  - `custom_display`: Provides flexibility for users to manually implement `Display` instead of using the default display format.
+- **Attributes:**
+  - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators.
+  - `custom_display`: Allows users to manually implement the `Display` trait, providing an alternative to the default display format.
 
 ## Installation
 Add `strong-type` to your `Cargo.toml`:
@@ -87,7 +90,7 @@ assert_eq!(map.len(), 2);
 use strong_type::StrongType;
 
 #[derive(StrongType)]
-#[numeric]
+#[auto_operators]
 struct Second(i32);
 
 let x = Second::new(2);
@@ -108,7 +111,7 @@ assert_eq!(x + y, Second(5));
 use strong_type::StrongType;
 
 #[derive(StrongType)]
-#[numeric]
+#[auto_operators]
 struct IsTrue(bool);
 
 let x = IsTrue::new(true);

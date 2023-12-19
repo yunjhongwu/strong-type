@@ -6,7 +6,7 @@ use syn::{parse_macro_input, DeriveInput};
 
 use crate::strong_type::expand_strong_type;
 
-#[proc_macro_derive(StrongType, attributes(numeric, custom_display))]
+#[proc_macro_derive(StrongType, attributes(auto_operators, custom_display))]
 pub fn strong_type(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     expand_strong_type(input).into()
