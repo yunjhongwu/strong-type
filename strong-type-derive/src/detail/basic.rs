@@ -3,6 +3,12 @@ use quote::quote;
 
 pub(crate) fn implement_basic(name: &syn::Ident, value_type: &syn::Ident) -> TokenStream {
     quote! {
+        impl #name {
+            pub fn new(value: impl Into<#value_type>) -> Self {
+                Self(value.into())
+            }
+        }
+
         impl StrongType for #name {
             type UnderlyingType = #value_type;
         }

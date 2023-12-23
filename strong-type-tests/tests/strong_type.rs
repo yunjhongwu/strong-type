@@ -102,7 +102,7 @@ mod tests {
         #[derive(StrongType)]
         struct Days(u32);
         let _ = Days(1);
-        let _ = Days::new(1);
+        let _ = Days::new(1u32);
 
         #[derive(StrongType)]
         struct Value(f64);
