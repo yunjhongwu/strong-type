@@ -196,4 +196,20 @@ mod tests {
         assert_eq!(!x, IsTrue::new(false));
         assert_eq!(!x_ref, IsTrue::new(false));
     }
+
+    #[test]
+    fn test_bit_shift() {
+        #[derive(StrongType)]
+        #[strong_type(auto_operators)]
+        struct CacheSize(i32);
+
+        let x = CacheSize::new(5);
+        let x_ref = &x;
+        let shift = 2;
+
+        assert_eq!(x << shift, CacheSize::new(20));
+        assert_eq!(x_ref << shift, CacheSize::new(20));
+        assert_eq!(x >> shift, CacheSize::new(1));
+        assert_eq!(x_ref >> shift, CacheSize::new(1));
+    }
 }
