@@ -1,25 +1,12 @@
 use crate::detail::{
-    get_type_group, get_type_ident, has_auto_operators, has_custom_display, implement_arithmetic,
-    implement_basic, implement_basic_primitive, implement_basic_string, implement_bool_ops,
-    implement_display, implement_hash, implement_min_max, implement_nan, implement_negate,
-    UnderlyingTypeGroup,
+    get_attributes, get_type_group, get_type_ident, implement_arithmetic, implement_basic,
+    implement_basic_primitive, implement_basic_string, implement_bool_ops, implement_display,
+    implement_hash, implement_min_max, implement_nan, implement_negate, is_struct_valid,
+    StrongTypeAttributes, UnderlyingTypeGroup,
 };
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{Data, DeriveInput, Fields, Visibility};
-
-fn is_struct_valid(input: &DeriveInput) -> bool {
-    if let Data::Struct(data_struct) = &input.data {
-        if let Fields::Unnamed(fields_unnamed) = &data_struct.fields {
-            return (fields_unnamed.unnamed.len() == 1)
-                && matches!(
-                    fields_unnamed.unnamed.first().unwrap().vis,
-                    Visibility::Inherited
-                );
-        }
-    }
-    false
-}
+use syn::DeriveInput;
 
 pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
     if !is_struct_valid(&input) {
@@ -29,10 +16,15 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
     let name = &input.ident;
     let value_type = get_type_ident(&input);
     let group = get_type_group(value_type);
+    let StrongTypeAttributes {
+        has_auto_operators,
+        has_custom_display,
+    } = get_attributes(&input);
 
     let mut ast = quote!();
     ast.extend(implement_basic(name, value_type));
-    if !has_custom_display(&input) {
+
+    if !has_custom_display {
         ast.extend(implement_display(name));
     };
 
@@ -61,7 +53,7 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
         }
     }
 
-    if has_auto_operators(&input) {
+    if has_auto_operators {
         match &group {
             UnderlyingTypeGroup::Int | UnderlyingTypeGroup::Float => {
                 ast.extend(implement_arithmetic(name));

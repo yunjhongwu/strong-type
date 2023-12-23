@@ -11,7 +11,8 @@ mod tests {
         assert_eq!(format!("{:?}", Meter::new(-2)), "Meter { value: -2 }");
 
         #[derive(StrongType)]
-        #[custom_display]
+        #[strong_type(custom_display)]
+
         struct Mile(f64);
 
         impl Display for Mile {
