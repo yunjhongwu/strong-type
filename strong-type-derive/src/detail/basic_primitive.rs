@@ -4,10 +4,6 @@ use quote::quote;
 pub(crate) fn implement_basic_primitive(name: &syn::Ident, value_type: &syn::Ident) -> TokenStream {
     quote! {
         impl #name {
-            pub fn new(value: #value_type) -> Self {
-                Self(value.into())
-            }
-
             pub fn value(&self) -> #value_type {
                 self.0
             }

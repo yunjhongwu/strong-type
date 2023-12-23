@@ -47,7 +47,6 @@ use strong_type::StrongType;
 struct Tag(String);
 
 let tag = Tag::new("dev");
-let tag: Tag = "dev".into(); // Alternative instantiation
 ```
 
 #### Demonstrating type distinctiveness:
@@ -91,19 +90,18 @@ use strong_type::StrongType;
 
 #[derive(StrongType)]
 #[strong_type(auto_operators)]
+struct Nanosecond(u32);
 
-struct Second(i32);
-
-let x = Second::new(2);
-let y = Second::new(3);
-let z = Second::default();
+let x = Nanosecond(2);
+let y = Nanosecond(3);
+let z = Nanosecond::default();
 
 assert_eq!(x.value(), 2);
 assert_eq!(y.value(), 3);
 assert_eq!(z.value(), 0);
 assert!(x < y);
 assert!(y >= x);
-assert_eq!(x + y, Second(5));
+assert_eq!(x + y, Nanosecond(5));
 ```
 
 #### Named bool type with logical operations:
