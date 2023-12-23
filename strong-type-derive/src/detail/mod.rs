@@ -22,4 +22,4 @@ pub(crate) use min_max::implement_min_max;
 pub(crate) use nan::implement_nan;
 pub(crate) use negate::implement_negate;
 pub(crate) use underlying_type::{get_type_group, get_type_ident, UnderlyingTypeGroup};
-pub(crate) use utils::{has_auto_operators, has_custom_display};
+pub(crate) use utils::{get_attributes, is_struct_valid, StrongTypeAttributes};

@@ -19,7 +19,7 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
      - Conditionally, based on the underlying data type, traits like `Copy`, `Eq`, `Ord`, `Hash` may also be implemented. For primitive data types like `i32` or `bool`, these additional traits will be automatically included.
      - Numeric types (integer and floating-point) additionally implement methods like `min()`, `max()`, and, for floating-point types, `nan()`.
 
-- **Attributes:**
+- **Attributes:** adding the following attributes to `#[strong_type(...)]` allows for additional features:
   - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators.
   - `custom_display`: Allows users to manually implement the `Display` trait, providing an alternative to the default display format.
 
@@ -90,7 +90,8 @@ assert_eq!(map.len(), 2);
 use strong_type::StrongType;
 
 #[derive(StrongType)]
-#[auto_operators]
+#[strong_type(auto_operators)]
+
 struct Second(i32);
 
 let x = Second::new(2);
@@ -111,7 +112,8 @@ assert_eq!(x + y, Second(5));
 use strong_type::StrongType;
 
 #[derive(StrongType)]
-#[auto_operators]
+#[strong_type(auto_operators)]
+
 struct IsTrue(bool);
 
 let x = IsTrue::new(true);
@@ -130,7 +132,8 @@ use std::fmt::{Display, Formatter, Result};
 use strong_type::StrongType;
 
 #[derive(StrongType)]
-#[custom_display]
+#[strong_type(custom_display)]
+
 struct Second(f64);
 
 impl Display for Second {
