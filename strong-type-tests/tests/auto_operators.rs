@@ -5,7 +5,7 @@ mod tests {
     #[test]
     fn test_int_arithmetic() {
         #[derive(StrongType)]
-        #[auto_operators]
+        #[strong_type(auto_operators)]
         struct Second(i32);
 
         let x = Second(2);
@@ -104,7 +104,8 @@ mod tests {
     #[test]
     fn test_float_arithmetic() {
         #[derive(StrongType)]
-        #[auto_operators]
+        #[strong_type(auto_operators)]
+
         struct Second(f64);
 
         let x = Second::new(2.0);
@@ -168,7 +169,8 @@ mod tests {
     #[test]
     fn test_bool_ops() {
         #[derive(StrongType)]
-        #[auto_operators]
+        #[strong_type(auto_operators)]
+
         struct IsTrue(bool);
 
         let x = IsTrue::new(true);

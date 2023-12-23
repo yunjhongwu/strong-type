@@ -210,4 +210,20 @@ mod tests {
         map.insert(Tag::new("prod"));
         assert_eq!(map.len(), 2);
     }
+
+    #[test]
+    fn test_parse_attributes() {
+        #[derive(StrongType)]
+        #[strong_type(auto_operators, custom_display)]
+        struct Sign(i32);
+        let x = -Sign::new(1);
+
+        impl std::fmt::Display for Sign {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "CustomDisplaySign({})", self.value())
+            }
+        }
+
+        assert_eq!(format!("{}", x), "CustomDisplaySign(-1)");
+    }
 }
