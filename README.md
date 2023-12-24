@@ -13,13 +13,12 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 
 ## Features
 
-- **Derive trait:**
-  - `StrongType`: Create a named strong type. 
-     - The macro automatically implement common traits like `Clone`, `Debug`, `Default`, `PartialEq`, `PartialOrd`, `Send`, and `Sync`. It also implements `Display` by default, unless overridden by the custom_display attribute. 
-     - Conditionally, based on the underlying data type, traits like `Copy`, `Eq`, `Ord`, `Hash` may also be implemented. For primitive data types like `i32` or `bool`, these additional traits will be automatically included.
-     - Numeric types (integer and floating-point) additionally implement methods like `min()`, `max()`, and, for floating-point types, `nan()`.
+- **Derive trait `StrongType`:** Create a named strong type. 
+  - The macro automatically implement common traits like `Clone`, `Debug`, `Default`, `PartialEq`, `PartialOrd`, `Send`, and `Sync`. It also implements `Display` by default, unless overridden by the custom_display attribute. 
+  - Conditionally, based on the underlying data type, traits like `Copy`, `Eq`, `Ord`, `Hash` may also be implemented. For primitive data types like `i32` or `bool`, these additional traits will be automatically included.
+  - Numeric types (integer and floating-point) additionally implement methods like `min()`, `max()`, and, for floating-point types, `nan()`.
 
-- **Attributes:** adding the following attributes to `#[strong_type(...)]` allows for additional features:
+- **Attributes:** Adding the following attributes to `#[strong_type(...)]` allows for additional features:
   - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators.
   - `custom_display`: Allows users to manually implement the `Display` trait, providing an alternative to the default display format.
 
@@ -27,7 +26,7 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 Add `strong-type` to your `Cargo.toml`:
 ```toml
 [dependencies]
-strong-type = "*" # Using the latest version or specify a version number
+strong-type = "0.5.0"
 ```
 
 ## Supported underlying types:
