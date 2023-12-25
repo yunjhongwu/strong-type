@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
-pub(crate) fn implement_arithmetic(name: &syn::Ident) -> TokenStream {
+pub(crate) fn implement_add(name: &syn::Ident) -> TokenStream {
     quote! {
         impl std::ops::Add<Self> for #name {
             type Output = Self;
@@ -46,7 +46,11 @@ pub(crate) fn implement_arithmetic(name: &syn::Ident) -> TokenStream {
                 self.0 += rhs.value()
             }
         }
+    }
+}
 
+pub(crate) fn implement_sub(name: &syn::Ident) -> TokenStream {
+    quote! {
         impl std::ops::Sub<Self> for #name {
             type Output = Self;
             fn sub(self, rhs: Self) -> Self::Output {
@@ -87,7 +91,11 @@ pub(crate) fn implement_arithmetic(name: &syn::Ident) -> TokenStream {
                 self.0 -= rhs.value()
             }
         }
+    }
+}
 
+pub(crate) fn implement_mul(name: &syn::Ident) -> TokenStream {
+    quote! {
         impl std::ops::Mul<Self> for #name {
             type Output = Self;
             fn mul(self, rhs: Self) -> Self::Output {
@@ -127,7 +135,11 @@ pub(crate) fn implement_arithmetic(name: &syn::Ident) -> TokenStream {
                 self.0 *= rhs.value()
             }
         }
+    }
+}
 
+pub(crate) fn implement_div(name: &syn::Ident) -> TokenStream {
+    quote! {
         impl std::ops::Div<Self> for #name {
             type Output = Self;
             fn div(self, rhs: Self) -> Self::Output {
@@ -167,7 +179,11 @@ pub(crate) fn implement_arithmetic(name: &syn::Ident) -> TokenStream {
                 self.0 /= rhs.value()
             }
         }
+    }
+}
 
+pub(crate) fn implement_rem(name: &syn::Ident) -> TokenStream {
+    quote! {
         impl std::ops::Rem<Self> for #name {
             type Output = Self;
             fn rem(self, rhs: Self) -> Self::Output {
@@ -207,5 +223,21 @@ pub(crate) fn implement_arithmetic(name: &syn::Ident) -> TokenStream {
                 self.0 %= rhs.value()
             }
         }
+    }
+}
+
+pub(crate) fn implement_arithmetic(name: &syn::Ident) -> TokenStream {
+    let add = implement_add(name);
+    let sub = implement_sub(name);
+    let mul = implement_mul(name);
+    let div = implement_div(name);
+    let rem = implement_rem(name);
+
+    quote! {
+        #add
+        #sub
+        #mul
+        #div
+        #rem
     }
 }
