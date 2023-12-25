@@ -212,4 +212,59 @@ mod tests {
         assert_eq!(x >> shift, CacheSize::new(1));
         assert_eq!(x_ref >> shift, CacheSize::new(1));
     }
+
+    #[test]
+    fn test_bit_logical() {
+        #[derive(StrongType)]
+        #[strong_type(auto_operators)]
+        struct Mask(i32);
+
+        let y = Mask::new(37);
+        let y_ref = &y;
+
+        let x = Mask::new(19);
+        let x_ref = &x;
+        assert_eq!(x & y, Mask::new(1));
+        assert_eq!(x_ref & y, Mask::new(1));
+        assert_eq!(x & y_ref, Mask::new(1));
+        assert_eq!(x_ref & y_ref, Mask::new(1));
+
+        let mut x = Mask::new(19);
+        x &= y;
+        assert_eq!(x, Mask::new(1));
+
+        let mut x = Mask::new(19);
+        x &= y_ref;
+        assert_eq!(x, Mask::new(1));
+
+        let x = Mask::new(19);
+        let x_ref = &x;
+        assert_eq!(x | y, Mask::new(55));
+        assert_eq!(x_ref | y, Mask::new(55));
+        assert_eq!(x | y_ref, Mask::new(55));
+        assert_eq!(x_ref | y_ref, Mask::new(55));
+
+        let mut x = Mask::new(19);
+        x |= y;
+        assert_eq!(x, Mask::new(55));
+
+        let mut x = Mask::new(19);
+        x |= y_ref;
+        assert_eq!(x, Mask::new(55));
+
+        let x = Mask::new(19);
+        let x_ref = &x;
+        assert_eq!(x ^ y, Mask::new(54));
+        assert_eq!(x_ref ^ y, Mask::new(54));
+        assert_eq!(x ^ y_ref, Mask::new(54));
+        assert_eq!(x_ref ^ y_ref, Mask::new(54));
+
+        let mut x = Mask::new(19);
+        x ^= y;
+        assert_eq!(x, Mask::new(54));
+
+        let mut x = Mask::new(19);
+        x ^= y_ref;
+        assert_eq!(x, Mask::new(54));
+    }
 }
