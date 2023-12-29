@@ -82,14 +82,14 @@ mod tests {
         #[derive(StrongType)]
         struct Second(i32);
 
-        assert_eq!(Second::max().value(), i32::MAX);
-        assert_eq!(Second::min().value(), i32::MIN);
+        assert_eq!(Second::MAX.value(), i32::MAX);
+        assert_eq!(Second::MIN.value(), i32::MIN);
 
         #[derive(StrongType)]
         struct Meter(f64);
 
-        assert_eq!(Meter::max().value(), f64::MAX);
-        assert_eq!(Meter::min().value(), f64::MIN);
+        assert_eq!(Meter::MAX.value(), f64::MAX);
+        assert_eq!(Meter::MIN.value(), f64::MIN);
     }
 
     #[test]
@@ -143,6 +143,8 @@ mod tests {
         assert!(y >= z);
         assert_eq!(x, z);
         assert_ne!(x, y);
+        assert_eq!(x.max(y), y);
+        assert_eq!(x.min(y), x);
 
         #[derive(StrongType)]
         struct Meter(f64);
