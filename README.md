@@ -91,8 +91,8 @@ use strong_type::StrongType;
 #[strong_type(auto_operators)]
 struct Nanosecond(u32);
 
-let x = Nanosecond(2);
-let y = Nanosecond(3);
+let x = Nanosecond::new(2);
+let y = Nanosecond::new(3);
 let z = Nanosecond::default();
 
 assert_eq!(x.value(), 2);
