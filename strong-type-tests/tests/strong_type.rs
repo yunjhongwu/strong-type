@@ -159,6 +159,17 @@ mod tests {
         assert!(y >= z);
         assert_eq!(x, z);
         assert_ne!(x, y);
+
+        #[derive(StrongType)]
+        struct Name(String);
+
+        let x = Name::new("Tim");
+        let y = Name::new("Tom");
+
+        assert!(x < y);
+        assert!(x <= y);
+        assert!(y > x);
+        assert!(y >= x);
     }
 
     #[test]

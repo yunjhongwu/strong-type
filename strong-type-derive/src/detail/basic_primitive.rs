@@ -16,5 +16,12 @@ pub(crate) fn implement_basic_primitive(name: &syn::Ident, value_type: &syn::Ide
                 *self
             }
         }
+
+        #[allow(clippy::incorrect_partial_ord_impl_on_ord_type)]
+        impl std::cmp::PartialOrd for #name {
+            fn partial_cmp(&self, rhs: &Self) -> Option<std::cmp::Ordering> {
+                 self.value().partial_cmp(&rhs.value())
+            }
+        }
     }
 }

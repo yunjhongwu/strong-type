@@ -14,5 +14,11 @@ pub(crate) fn implement_basic_string(name: &syn::Ident) -> TokenStream {
                 Self(self.0.clone())
             }
         }
+
+        impl std::cmp::PartialOrd for #name {
+            fn partial_cmp(&self, rhs: &Self) -> Option<std::cmp::Ordering> {
+                 Some(self.cmp(rhs))
+            }
+        }
     }
 }
