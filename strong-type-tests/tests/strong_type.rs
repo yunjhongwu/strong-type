@@ -78,18 +78,27 @@ mod tests {
     }
 
     #[test]
-    fn test_min_max() {
+    fn test_constants() {
         #[derive(StrongType)]
         struct Second(i32);
 
         assert_eq!(Second::MAX.value(), i32::MAX);
         assert_eq!(Second::MIN.value(), i32::MIN);
+        assert_eq!(Second::ZERO.value(), 0i32);
 
         #[derive(StrongType)]
-        struct Meter(f64);
+        struct State(u8);
 
-        assert_eq!(Meter::MAX.value(), f64::MAX);
-        assert_eq!(Meter::MIN.value(), f64::MIN);
+        assert_eq!(State::MAX.value(), u8::MAX);
+        assert_eq!(State::MIN.value(), u8::MIN);
+        assert_eq!(State::ZERO.value(), 0u8);
+
+        #[derive(StrongType)]
+        struct Meter(f32);
+
+        assert_eq!(Meter::MAX.value(), f32::MAX);
+        assert_eq!(Meter::MIN.value(), f32::MIN);
+        assert_eq!(Meter::ZERO.value(), 0f32);
     }
 
     #[test]
@@ -189,7 +198,7 @@ mod tests {
         #[derive(StrongType)]
         struct Meter(f64);
 
-        let y = Meter::nan();
+        let y = Meter::NAN;
         assert!(y.is_nan());
         assert!(y.value().is_nan());
 
