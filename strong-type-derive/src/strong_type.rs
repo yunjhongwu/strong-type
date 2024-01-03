@@ -1,7 +1,7 @@
 use crate::detail::{
     get_attributes, get_type_group, get_type_ident, implement_arithmetic, implement_basic,
     implement_basic_primitive, implement_basic_string, implement_bit_shift, implement_bool_ops,
-    implement_display, implement_hash, implement_min_max, implement_nan, implement_negate,
+    implement_constants, implement_display, implement_hash, implement_nan, implement_negate,
     is_struct_valid, StrongTypeAttributes, UnderlyingTypeGroup,
 };
 use proc_macro2::TokenStream;
@@ -31,12 +31,12 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
     match &group {
         UnderlyingTypeGroup::Int | UnderlyingTypeGroup::UInt => {
             ast.extend(implement_basic_primitive(name, value_type));
-            ast.extend(implement_min_max(name, value_type));
+            ast.extend(implement_constants(name, value_type));
             ast.extend(implement_hash(name));
         }
         UnderlyingTypeGroup::Float => {
             ast.extend(implement_basic_primitive(name, value_type));
-            ast.extend(implement_min_max(name, value_type));
+            ast.extend(implement_constants(name, value_type));
             ast.extend(implement_nan(name, value_type));
         }
         UnderlyingTypeGroup::Bool => {
