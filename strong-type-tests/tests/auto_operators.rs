@@ -64,6 +64,12 @@ mod tests {
         let z = Second(2);
 
         assert_eq!(-z, Second(-2));
+
+        let arr = [Second(2), Second(3), Second(5)];
+        assert_eq!(arr.iter().sum::<Second>(), Second(10));
+        assert_eq!(arr.iter().copied().sum::<Second>(), Second(10));
+        assert_eq!(arr.iter().product::<Second>(), Second(30));
+        assert_eq!(arr.iter().copied().product::<Second>(), Second(30));
     }
 
     #[test]
@@ -164,6 +170,12 @@ mod tests {
         let z = Second::new(2.0);
 
         assert_eq!(-z, Second::new(-2.0));
+
+        let arr = [Second(2.0), Second(3.5), Second(4.5)];
+        assert_eq!(arr.iter().sum::<Second>(), Second(10.0));
+        assert_eq!(arr.iter().copied().sum::<Second>(), Second(10.0));
+        assert_eq!(arr.iter().product::<Second>(), Second(31.5));
+        assert_eq!(arr.iter().copied().product::<Second>(), Second(31.5));
     }
 
     #[test]

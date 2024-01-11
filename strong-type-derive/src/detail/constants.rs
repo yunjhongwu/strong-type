@@ -7,6 +7,7 @@ pub(crate) fn implement_constants(name: &syn::Ident, value_type: &syn::Ident) ->
             pub const MIN: Self = Self(#value_type::MIN);
             pub const MAX: Self = Self(#value_type::MAX);
             pub const ZERO: Self = Self(0 as #value_type);
+            pub const ONE: Self = Self(1 as #value_type);
         }
     }
 }
