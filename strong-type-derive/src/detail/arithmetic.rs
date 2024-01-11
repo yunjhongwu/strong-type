@@ -46,6 +46,18 @@ pub(crate) fn implement_add(name: &syn::Ident) -> TokenStream {
                 self.0 += rhs.value()
             }
         }
+
+        impl std::iter::Sum<Self> for #name {
+            fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+                iter.fold(Self::ZERO, std::ops::Add::add)
+            }
+        }
+
+        impl<'a> std::iter::Sum<&'a Self> for #name {
+            fn sum<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
+                iter.fold(Self::ZERO, std::ops::Add::add)
+            }
+        }
     }
 }
 
@@ -133,6 +145,18 @@ pub(crate) fn implement_mul(name: &syn::Ident) -> TokenStream {
         impl std::ops::MulAssign<&Self> for #name {
             fn mul_assign(&mut self, rhs: &Self) {
                 self.0 *= rhs.value()
+            }
+        }
+
+        impl std::iter::Product<Self> for #name {
+            fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
+                iter.fold(Self::ONE, std::ops::Mul::mul)
+            }
+        }
+
+        impl<'a> std::iter::Product<&'a Self> for #name {
+            fn product<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
+                iter.fold(Self::ONE, std::ops::Mul::mul)
             }
         }
     }
