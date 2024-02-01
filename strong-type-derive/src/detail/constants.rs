@@ -11,3 +11,16 @@ pub(crate) fn implement_constants(name: &syn::Ident, value_type: &syn::Ident) ->
         }
     }
 }
+pub(crate) fn implement_constants_derived(
+    name: &syn::Ident,
+    value_type: &syn::Ident,
+) -> TokenStream {
+    quote! {
+        impl #name {
+            pub const MIN: Self = Self(#value_type::MIN);
+            pub const MAX: Self = Self(#value_type::MAX);
+            pub const ZERO: Self = Self(#value_type::ZERO);
+            pub const ONE: Self = Self(#value_type::ONE);
+        }
+    }
+}
