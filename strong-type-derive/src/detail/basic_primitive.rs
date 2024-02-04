@@ -25,3 +25,29 @@ pub(crate) fn implement_basic_primitive(name: &syn::Ident, value_type: &syn::Ide
         }
     }
 }
+
+pub(crate) fn implement_primitive_accessor(
+    name: &syn::Ident,
+    primitive_type: &syn::Ident,
+) -> TokenStream {
+    quote! {
+        impl #name {
+            pub fn primitive(&self) -> #primitive_type {
+                self.value()
+            }
+        }
+    }
+}
+
+pub(crate) fn implement_primitive_accessor_derived(
+    name: &syn::Ident,
+    primitive_type: &syn::Ident,
+) -> TokenStream {
+    quote! {
+        impl #name {
+            pub fn primitive(&self) -> #primitive_type {
+                self.0.primitive()
+            }
+        }
+    }
+}

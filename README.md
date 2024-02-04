@@ -18,9 +18,11 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
   - Conditionally, based on the underlying data type, traits like `Copy`, `Eq`, `Ord`, `Hash` may also be implemented. For primitive data types like `i32` or `bool`, these additional traits will be automatically included.
   - Numeric types, both integer and floating-point, also implement constants `MIN`, `MAX`, and `ZERO`. Additionally, for floating-point types, `NAN` is implemented.
 
-- **Attributes:** Adding the following attributes to `#[strong_type(...)]` allows for additional features:
-  - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators.
-  - `custom_display`: Allows users to manually implement the `Display` trait, providing an alternative to the default display format.
+- **Attributes:** 
+  - Adding the following attributes to `#[strong_type(...)]` allows for additional features:
+    - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators.
+    - `custom_display`: Allows users to manually implement the `Display` trait, providing an alternative to the default display format.
+  - Specifying the corresponding primitive types via `#[custom_underlying(...)]` for nested strong types.
 
 ## Installation
 Add `strong-type` to your `Cargo.toml`:
@@ -36,6 +38,7 @@ strong-type = "0.7"
   - Boolean type: `bool`
   - `char`
   - `String`
+  - Strong types of the above types
 
 ## Examples
 #### Creating a named strong type:
@@ -141,4 +144,22 @@ impl Display for Second {
 
 println!("{}", Second::new(std::f64::consts::E)); // "Second(2.72)"
 println!("{:?}", Second::new(std::f64::consts::E)); // "Second { value: 2.718281828459045 }"
+```
+
+#### Nested strong types:
+
+```rust
+#[derive(StrongType)]
+#[strong_type(auto_operators)]
+struct Dollar(i32);
+
+#[derive(StrongType)]
+#[strong_type(auto_operators)]
+#[custom_underlying(i32)]
+struct Cash(Dollar);
+
+#[derive(StrongType)]
+#[strong_type(auto_operators)]
+#[custom_underlying(i32)]
+struct Coin(Cash);
 ```
