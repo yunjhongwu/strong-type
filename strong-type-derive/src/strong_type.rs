@@ -1,10 +1,11 @@
 use crate::detail::{
     get_attributes, get_type, implement_arithmetic, implement_basic, implement_basic_primitive,
     implement_basic_string, implement_bit_shift, implement_bool_ops, implement_constants,
-    implement_constants_derived, implement_display, implement_hash, implement_nan,
-    implement_negate, implement_primitive_accessor, implement_primitive_accessor_derived,
-    implement_primitive_str_accessor, implement_primitive_str_accessor_derived, is_struct_valid,
-    StrongTypeAttributes, TypeInfo, UnderlyingType, ValueTypeGroup,
+    implement_constants_derived, implement_display, implement_hash, implement_infinity,
+    implement_limit, implement_nan, implement_negate, implement_primitive_accessor,
+    implement_primitive_accessor_derived, implement_primitive_str_accessor,
+    implement_primitive_str_accessor_derived, is_struct_valid, StrongTypeAttributes, TypeInfo,
+    UnderlyingType, ValueTypeGroup,
 };
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -58,7 +59,7 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
         ValueTypeGroup::Int(underlying_type) | ValueTypeGroup::UInt(underlying_type) => {
             ast.extend(implement_basic_primitive(name, &value_type));
             ast.extend(implement_hash(name));
-
+            ast.extend(implement_limit(name, &value_type));
             match underlying_type {
                 UnderlyingType::Primitive => ast.extend(implement_constants(name, &value_type)),
                 UnderlyingType::Derived => {
@@ -69,10 +70,14 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
         ValueTypeGroup::Float(underlying_type) => {
             ast.extend(implement_basic_primitive(name, &value_type));
             ast.extend(implement_nan(name, &value_type));
+            ast.extend(implement_limit(name, &value_type));
+            ast.extend(implement_infinity(name, &value_type));
             match underlying_type {
-                UnderlyingType::Primitive => ast.extend(implement_constants(name, &value_type)),
+                UnderlyingType::Primitive => {
+                    ast.extend(implement_constants(name, &value_type));
+                }
                 UnderlyingType::Derived => {
-                    ast.extend(implement_constants_derived(name, &value_type))
+                    ast.extend(implement_constants_derived(name, &value_type));
                 }
             }
         }

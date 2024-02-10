@@ -103,6 +103,7 @@ mod tests {
         assert_eq!(Second::MAX.value(), i32::MAX);
         assert_eq!(Second::MIN.value(), i32::MIN);
         assert_eq!(Second::ZERO.value(), 0i32);
+        assert_eq!(Second::ONE.value(), 1i32);
 
         #[derive(StrongType)]
         struct State(u8);
@@ -110,13 +111,17 @@ mod tests {
         assert_eq!(State::MAX.value(), u8::MAX);
         assert_eq!(State::MIN.value(), u8::MIN);
         assert_eq!(State::ZERO.value(), 0u8);
+        assert_eq!(State::ONE.value(), 1u8);
 
         #[derive(StrongType)]
         struct Meter(f32);
 
         assert_eq!(Meter::MAX.value(), f32::MAX);
         assert_eq!(Meter::MIN.value(), f32::MIN);
+        assert_eq!(Meter::INFINITY.value(), f32::INFINITY);
+        assert_eq!(Meter::NEG_INFINITY.value(), f32::NEG_INFINITY);
         assert_eq!(Meter::ZERO.value(), 0f32);
+        assert_eq!(Meter::ONE.value(), 1f32);
     }
 
     #[test]
