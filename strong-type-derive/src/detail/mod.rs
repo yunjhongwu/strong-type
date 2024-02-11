@@ -23,7 +23,9 @@ pub(crate) use basic_string::{
 };
 pub(crate) use bit_ops::implement_bit_shift;
 pub(crate) use bool_ops::implement_bool_ops;
-pub(crate) use constants::{implement_constants, implement_constants_derived};
+pub(crate) use constants::{
+    implement_constants, implement_constants_derived, implement_infinity, implement_limit,
+};
 pub(crate) use display::implement_display;
 pub(crate) use hash::implement_hash;
 pub(crate) use nan::implement_nan;
