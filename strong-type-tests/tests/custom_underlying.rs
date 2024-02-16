@@ -12,8 +12,7 @@ mod tests {
         struct Dollar(i32);
 
         #[derive(StrongType)]
-        #[strong_type(auto_operators)]
-        #[custom_underlying(i32)]
+        #[strong_type(auto_operators, underlying=i32)]
         struct Cash(Dollar);
         test_type::<Cash>();
         assert_eq!(mem::size_of::<Cash>(), mem::size_of::<i32>());
@@ -30,7 +29,7 @@ mod tests {
         );
 
         #[derive(StrongType)]
-        #[custom_underlying(i32)]
+        #[strong_type(underlying=i32)]
         struct Coin(Cash);
         test_type::<Coin>();
         assert_eq!(mem::size_of::<Coin>(), mem::size_of::<i32>());
@@ -51,7 +50,7 @@ mod tests {
         struct Tag(String);
 
         #[derive(StrongType)]
-        #[custom_underlying(String)]
+        #[strong_type(underlying=String)]
         struct Name(Tag);
 
         test_type::<Name>();
@@ -62,7 +61,7 @@ mod tests {
         );
 
         #[derive(StrongType)]
-        #[custom_underlying(String)]
+        #[strong_type(underlying=String)]
         struct Surname(Name);
         assert_eq!(mem::size_of::<Surname>(), mem::size_of::<String>());
         assert_eq!(

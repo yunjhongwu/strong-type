@@ -1,5 +1,5 @@
 use crate::detail::{
-    get_attributes, get_type, implement_arithmetic, implement_basic, implement_basic_primitive,
+    get_attributes, implement_arithmetic, implement_basic, implement_basic_primitive,
     implement_basic_string, implement_bit_shift, implement_bool_ops, implement_constants,
     implement_constants_derived, implement_display, implement_hash, implement_infinity,
     implement_limit, implement_nan, implement_negate, implement_primitive_accessor,
@@ -17,18 +17,21 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
     }
 
     let name = &input.ident;
-    let TypeInfo {
-        primitive_type,
-        value_type,
-        type_group,
-    } = get_type(&input);
     let StrongTypeAttributes {
         has_auto_operators,
         has_custom_display,
+        type_info:
+            TypeInfo {
+                primitive_type,
+                value_type,
+                type_group,
+            },
     } = get_attributes(&input);
+    let type_group = type_group
+        .unwrap_or_else(|| panic!("Unable to determine the primitive type of {}", value_type));
 
     let mut ast = quote!();
-    ast.extend(implement_basic(name, &value_type));
+    ast.extend(implement_basic(name, &value_type, &primitive_type));
 
     if !has_custom_display {
         ast.extend(implement_display(name));

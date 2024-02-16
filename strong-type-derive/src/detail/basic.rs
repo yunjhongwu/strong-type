@@ -1,7 +1,11 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
-pub(crate) fn implement_basic(name: &syn::Ident, value_type: &syn::Ident) -> TokenStream {
+pub(crate) fn implement_basic(
+    name: &syn::Ident,
+    value_type: &syn::Ident,
+    primitive_type: &syn::Ident,
+) -> TokenStream {
     quote! {
         impl #name {
             pub fn new(value: impl Into<#value_type>) -> Self {
@@ -11,6 +15,8 @@ pub(crate) fn implement_basic(name: &syn::Ident, value_type: &syn::Ident) -> Tok
 
         impl StrongType for #name {
             type UnderlyingType = #value_type;
+            type PrimitiveType = #primitive_type;
+
         }
 
         impl std::fmt::Debug for #name {
