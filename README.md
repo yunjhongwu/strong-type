@@ -154,12 +154,10 @@ println!("{:?}", Second::new(std::f64::consts::E)); // "Second { value: 2.718281
 struct Dollar(i32);
 
 #[derive(StrongType)]
-#[strong_type(auto_operators)]
-#[custom_underlying(i32)]
+#[strong_type(auto_operators, underlying = i32)]
 struct Cash(Dollar);
 
 #[derive(StrongType)]
-#[strong_type(auto_operators)]
-#[custom_underlying(i32)]
+#[strong_type(underlying = i32)]
 struct Coin(Cash);
 ```
