@@ -16,7 +16,7 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 - **Derive trait `StrongType`:** Create a named strong type. 
   - The macro automatically implement common traits like `Clone`, `Debug`, `Default`, `PartialEq`, `PartialOrd`, `Send`, and `Sync`. It also implements `Display` by default, unless overridden by the custom_display attribute. 
   - Conditionally, based on the underlying data type, traits like `Copy`, `Eq`, `Ord`, `Hash` may also be implemented. For primitive data types like `i32` or `bool`, these additional traits will be automatically included.
-  - Numeric types, both integer and floating-point, also implement constants `MIN`, `MAX`, and `ZERO`. Additionally, for floating-point types, `NAN` is implemented.
+  - Numeric types, both integer and floating-point, also implement constants `MIN`, `MAX`, `INFINITY`, `NEG_INFINITY`, and `ZERO`. Additionally, for floating-point types, `NAN` is implemented.
 
 - **Attributes:** 
   - Adding the following attributes to `#[strong_type(...)]` allows for additional features:
