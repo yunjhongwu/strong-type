@@ -22,7 +22,7 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
   - Adding the following attributes to `#[strong_type(...)]` allows for additional features:
     - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators.
     - `custom_display`: Allows users to manually implement the `Display` trait, providing an alternative to the default display format.
-  - Specifying the corresponding primitive types via `#[custom_underlying(...)]` for nested strong types.
+    - `underlying`: Specifies the underlying primitive type for nested strong types.
 
 ## Installation
 Add `strong-type` to your `Cargo.toml`:
