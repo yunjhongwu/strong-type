@@ -11,12 +11,15 @@ pub(crate) fn implement_basic(
             pub fn new(value: impl Into<#value_type>) -> Self {
                 Self(value.into())
             }
+
+            pub const fn const_new(value: #value_type) -> Self {
+                Self(value)
+            }
         }
 
         impl StrongType for #name {
             type UnderlyingType = #value_type;
             type PrimitiveType = #primitive_type;
-
         }
 
         impl std::fmt::Debug for #name {
