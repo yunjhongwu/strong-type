@@ -263,4 +263,14 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn test_const() {
+        #[derive(StrongType)]
+        struct NamedI32(i32);
+
+        const NAMED_I32: NamedI32 = NamedI32::const_new(1);
+
+        assert_eq!(NAMED_I32, NamedI32::new(1));
+    }
 }

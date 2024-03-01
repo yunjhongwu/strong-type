@@ -49,6 +49,7 @@ use strong_type::StrongType;
 struct Tag(String);
 
 let tag = Tag::new("dev");
+const TAG: Tag = Tag::const_new("prod");
 ```
 
 #### Demonstrating type distinctiveness:
