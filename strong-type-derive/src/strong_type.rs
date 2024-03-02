@@ -1,11 +1,12 @@
 use crate::detail::{
     get_attributes, implement_arithmetic, implement_basic, implement_basic_primitive,
     implement_basic_string, implement_bit_shift, implement_bool_ops, implement_constants,
-    implement_constants_derived, implement_display, implement_hash, implement_infinity,
-    implement_limit, implement_nan, implement_negate, implement_primitive_accessor,
-    implement_primitive_accessor_derived, implement_primitive_str_accessor,
-    implement_primitive_str_accessor_derived, is_struct_valid, StrongTypeAttributes, TypeInfo,
-    UnderlyingType, ValueTypeGroup,
+    implement_constants_derived, implement_conversion, implement_display, implement_hash,
+    implement_infinity, implement_limit, implement_nan, implement_negate,
+    implement_primitive_accessor, implement_primitive_accessor_derived,
+    implement_primitive_str_accessor, implement_primitive_str_accessor_derived,
+    implement_str_conversion, is_struct_valid, StrongTypeAttributes, TypeInfo, UnderlyingType,
+    ValueTypeGroup,
 };
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -20,6 +21,7 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
     let StrongTypeAttributes {
         has_auto_operators,
         has_custom_display,
+        has_conversion,
         type_info:
             TypeInfo {
                 primitive_type,
@@ -36,6 +38,13 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
     if !has_custom_display {
         ast.extend(implement_display(name));
     };
+
+    if has_conversion {
+        ast.extend(implement_conversion(name, &value_type));
+        if let ValueTypeGroup::String(UnderlyingType::Primitive) = &type_group {
+            ast.extend(implement_str_conversion(name));
+        }
+    }
 
     match &type_group {
         ValueTypeGroup::Int(underlying_type)
