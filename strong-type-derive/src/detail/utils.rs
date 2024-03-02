@@ -5,6 +5,7 @@ use syn::{Data, DeriveInput, Fields, Visibility};
 pub(crate) struct StrongTypeAttributes {
     pub has_auto_operators: bool,
     pub has_custom_display: bool,
+    pub has_conversion: bool,
     pub type_info: TypeInfo,
 }
 
@@ -12,6 +13,7 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> StrongTypeAttributes {
     let mut attributes = StrongTypeAttributes {
         has_auto_operators: false,
         has_custom_display: false,
+        has_conversion: false,
         type_info: get_type(input),
     };
 
@@ -24,6 +26,9 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> StrongTypeAttributes {
                 } else if meta.path.is_ident("custom_display") {
                     attributes.has_custom_display = true;
                     Ok(())
+                } else if meta.path.is_ident("conversion") {
+                    attributes.has_conversion = true;
+                    Ok(())
                 } else if meta.path.is_ident("underlying") {
                     if let Ok(strm) = meta.value() {
                         if let Ok(primitive_type) = strm.parse::<syn::Ident>() {
@@ -35,7 +40,7 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> StrongTypeAttributes {
                     }
                     Ok(())
                 } else {
-                    Err(meta.error(format!("Invalid strong_type attribute {}, should be one of {{auto_operators, custom_display, underlying=type}}",
+                    Err(meta.error(format!("Invalid strong_type attribute {}, should be one of {{auto_operators, custom_display, conversion, underlying=type}}",
                                            meta.path.get_ident().expect("Failed to parse strong_type attributes."))))
                 }
             }) {

@@ -5,6 +5,7 @@ mod basic_string;
 mod bit_ops;
 mod bool_ops;
 mod constants;
+mod conversion;
 mod display;
 mod hash;
 mod nan;
@@ -26,6 +27,7 @@ pub(crate) use bool_ops::implement_bool_ops;
 pub(crate) use constants::{
     implement_constants, implement_constants_derived, implement_infinity, implement_limit,
 };
+pub(crate) use conversion::{implement_conversion, implement_str_conversion};
 pub(crate) use display::implement_display;
 pub(crate) use hash::implement_hash;
 pub(crate) use nan::implement_nan;
