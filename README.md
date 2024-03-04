@@ -22,7 +22,7 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
   - Adding the following attributes to `#[strong_type(...)]` allows for additional features:
     - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators.
     - `custom_display`: Allows users to manually implement the `Display` trait, providing an alternative to the default display format.
-    - `conversion`: Automatically implements `From` and `Into` traits for the underlying type.
+    - `conversion`: Automatically implements `From` and `Into` traits for the underlying type. This is optional since conversion may make strong types less distinct.
     - `underlying`: Specifies the underlying primitive type for nested strong types.
 
 ## Installation
@@ -163,3 +163,7 @@ struct Cash(Dollar);
 #[strong_type(underlying = i32)]
 struct Coin(Cash);
 ```
+
+### Caveats:
+- When using `#[derive(StrongType)]`, the traits `Eq` and `PartialEq` are implemented with `impl`. 
+ As a result, `StructuralEq` and `StructuralPartialEq` remain unimplemented, preventing pattern matching with strong-typed primitives.
