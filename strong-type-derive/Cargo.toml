@@ -1,7 +1,7 @@
 [package]
 name = "strong-type-derive"
 description = "Macro implemenation for #[derive(StrongType)]"
-version = "0.9.0"
+version = "0.10.0"
 edition = "2021"
 
 license = "MIT OR Apache-2.0"
