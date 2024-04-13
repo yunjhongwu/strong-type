@@ -43,6 +43,7 @@ strong-type = "0.10"
 
 ## Examples
 #### Creating a named strong type:
+With a private field:
 ```rust
 use strong_type::StrongType;
 
@@ -51,6 +52,17 @@ struct Tag(String);
 
 let tag = Tag::new("dev");
 const TAG: Tag = Tag::const_new("prod");
+```
+
+With a public field:
+```rust
+use strong_type::StrongType;
+
+#[derive(StrongType)]
+struct Timestamp(pub i64);
+
+let timestamp = Timestamp(1701620628123456789);
+println!("{}", timestamp); // Timestamp(1701620628123456789)
 ```
 
 #### Demonstrating type distinctiveness:

@@ -8,7 +8,7 @@ mod tests {
     fn test_type<T: std::fmt::Debug + Clone + Send + Sync + Default + PartialEq>() {}
 
     #[test]
-    fn test_basic() {
+    fn test_basic_with_new() {
         #[derive(StrongType)]
         struct NamedI8(i8);
         test_type::<NamedI8>();
@@ -265,12 +265,31 @@ mod tests {
     }
 
     #[test]
-    fn test_const() {
+    fn test_const_new() {
         #[derive(StrongType)]
         struct NamedI32(i32);
 
         const NAMED_I32: NamedI32 = NamedI32::const_new(1);
 
         assert_eq!(NAMED_I32, NamedI32::new(1));
+    }
+
+    #[test]
+    fn test_pub_type() {
+        #[derive(StrongType)]
+        #[strong_type(auto_operators)]
+        pub struct NamedI32(pub i32);
+        let mut x = NamedI32(1);
+        x.0 += 2;
+        assert_eq!(x, NamedI32::new(1) + NamedI32::new(2));
+        assert_eq!(x.to_string(), "NamedI32(3)");
+
+        #[derive(StrongType)]
+        pub struct NamedString(pub String);
+        let mut s = NamedString("Tim".to_string());
+        s.0.push_str("er");
+
+        assert_eq!(s, NamedString::new("Timer"));
+        assert_eq!(s.to_string(), "NamedString(Timer)");
     }
 }

@@ -33,4 +33,4 @@ pub(crate) use hash::implement_hash;
 pub(crate) use nan::implement_nan;
 pub(crate) use negate::implement_negate;
 pub(crate) use underlying_type_utils::{get_type, TypeInfo, UnderlyingType, ValueTypeGroup};
-pub(crate) use utils::{get_attributes, is_struct_valid, StrongTypeAttributes};
+pub(crate) use utils::{get_attributes, validate_struct, StrongTypeAttributes};
