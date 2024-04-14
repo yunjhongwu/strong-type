@@ -1,6 +1,6 @@
 use crate::detail::underlying_type_utils::get_type_group;
 use crate::detail::{get_type, TypeInfo, UnderlyingType};
-use syn::{Data, DeriveInput, Fields, Visibility};
+use syn::{Data, DeriveInput, Fields};
 
 pub(crate) struct StrongTypeAttributes {
     pub has_auto_operators: bool,
@@ -51,15 +51,13 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> StrongTypeAttributes {
     attributes
 }
 
-pub(crate) fn is_struct_valid(input: &DeriveInput) -> bool {
+pub(crate) fn validate_struct(input: &DeriveInput) {
     if let Data::Struct(data_struct) = &input.data {
         if let Fields::Unnamed(fields_unnamed) = &data_struct.fields {
-            return (fields_unnamed.unnamed.len() == 1)
-                && matches!(
-                    fields_unnamed.unnamed.first().unwrap().vis,
-                    Visibility::Inherited
-                );
+            if fields_unnamed.unnamed.len() == 1 {
+                return;
+            }
         }
-    }
-    false
+    };
+    panic!("Strong type must be a tuple struct with exactly one field.");
 }

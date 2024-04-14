@@ -5,7 +5,7 @@ use crate::detail::{
     implement_infinity, implement_limit, implement_nan, implement_negate,
     implement_primitive_accessor, implement_primitive_accessor_derived,
     implement_primitive_str_accessor, implement_primitive_str_accessor_derived,
-    implement_str_conversion, is_struct_valid, StrongTypeAttributes, TypeInfo, UnderlyingType,
+    implement_str_conversion, validate_struct, StrongTypeAttributes, TypeInfo, UnderlyingType,
     ValueTypeGroup,
 };
 use proc_macro2::TokenStream;
@@ -13,9 +13,7 @@ use quote::quote;
 use syn::DeriveInput;
 
 pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
-    if !is_struct_valid(&input) {
-        panic!("Strong type must be a tuple struct with one private field.");
-    }
+    validate_struct(&input);
 
     let name = &input.ident;
     let StrongTypeAttributes {
