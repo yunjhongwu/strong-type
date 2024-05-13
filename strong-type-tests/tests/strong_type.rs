@@ -217,17 +217,29 @@ mod tests {
     }
 
     #[test]
-    fn test_float_nan() {
+    fn test_float_nan_and_infinity() {
         #[derive(StrongType)]
         struct Meter(f64);
 
         let y = Meter::NAN;
         assert!(y.is_nan());
         assert!(y.value().is_nan());
+        assert!(!y.is_finite());
 
-        let z = Meter(0.0);
+        let z = Meter::new(0.0);
         assert!(!z.is_nan());
         assert!(!z.value().is_nan());
+        assert!(z.is_finite());
+
+        let w = Meter::INFINITY;
+        assert!(!w.is_nan());
+        assert!(!w.value().is_nan());
+        assert!(!w.is_finite());
+
+        let u = Meter::NEG_INFINITY;
+        assert!(!u.is_nan());
+        assert!(!u.value().is_nan());
+        assert!(!u.is_finite());
     }
 
     #[test]
