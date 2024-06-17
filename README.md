@@ -21,6 +21,8 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 - **Attributes:** 
   - Adding the following attributes to `#[strong_type(...)]` allows for additional features:
     - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators.
+    - `addable`: Automatically implements the `Add`, `Sub`, and other relevant traits. The attribute is a strict subset of `auto_operators`.
+    - `scalable`: Automatically implements the `Mul`, `Div`, `Rem`, and other relevant traits between a strong typed struct and its primitive type. Note that the attribute is not a subset of `auto_operators`. 
     - `custom_display`: Allows users to manually implement the `Display` trait, providing an alternative to the default display format.
     - `conversion`: Automatically implements `From` and `Into` traits for the underlying type. This is optional since conversion may make strong types less distinct.
     - `underlying`: Specifies the underlying primitive type for nested strong types.
@@ -118,6 +120,14 @@ assert_eq!(z.value(), 0);
 assert!(x < y);
 assert!(y >= x);
 assert_eq!(x + y, Nanosecond(5));
+
+#[derive(StrongType)]
+#[strong_type(scalable)]
+struct Millisecond(u32);
+
+let x = Millisecond::new(2);
+
+assert_eq!(x * 3, Millisecond(6));
 ```
 
 #### Named bool type with logical operations:
@@ -179,3 +189,4 @@ struct Coin(Cash);
 ### Caveats:
 - When using `#[derive(StrongType)]`, the traits `Eq` and `PartialEq` are implemented with `impl`. 
  As a result, `StructuralEq` and `StructuralPartialEq` remain unimplemented, preventing pattern matching with strong-typed primitives.
+- `#[strong_type(scalable)]` does not work for nested strong types.

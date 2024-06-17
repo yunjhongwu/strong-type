@@ -4,6 +4,8 @@ use syn::{Data, DeriveInput, Fields};
 
 pub(crate) struct StrongTypeAttributes {
     pub has_auto_operators: bool,
+    pub has_addable: bool,
+    pub has_scalable: bool,
     pub has_custom_display: bool,
     pub has_conversion: bool,
     pub type_info: TypeInfo,
@@ -14,6 +16,8 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> StrongTypeAttributes {
         has_auto_operators: false,
         has_custom_display: false,
         has_conversion: false,
+        has_addable: false,
+        has_scalable: false,
         type_info: get_type(input),
     };
 
@@ -22,6 +26,12 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> StrongTypeAttributes {
             if let Err(message) = attr.parse_nested_meta(|meta| {
                 if meta.path.is_ident("auto_operators") {
                     attributes.has_auto_operators = true;
+                    Ok(())
+                } else if meta.path.is_ident("addable") {
+                    attributes.has_addable = true;
+                    Ok(())
+                } else if meta.path.is_ident("scalable") {
+                    attributes.has_scalable = true;
                     Ok(())
                 } else if meta.path.is_ident("custom_display") {
                     attributes.has_custom_display = true;
@@ -40,7 +50,7 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> StrongTypeAttributes {
                     }
                     Ok(())
                 } else {
-                    Err(meta.error(format!("Invalid strong_type attribute {}, should be one of {{auto_operators, custom_display, conversion, underlying=type}}",
+                    Err(meta.error(format!("Invalid strong_type attribute {}, should be one of {{auto_operators, addable, scalable, custom_display, conversion, underlying=type}}",
                                            meta.path.get_ident().expect("Failed to parse strong_type attributes."))))
                 }
             }) {
