@@ -1,10 +1,10 @@
 use crate::detail::{
-    get_attributes, implement_arithmetic, implement_basic, implement_basic_primitive,
-    implement_basic_string, implement_bit_shift, implement_bool_ops, implement_constants,
-    implement_constants_derived, implement_conversion, implement_display, implement_hash,
-    implement_infinity, implement_limit, implement_nan, implement_negate,
+    get_attributes, implement_addable, implement_arithmetic, implement_basic,
+    implement_basic_primitive, implement_basic_string, implement_bit_shift, implement_bool_ops,
+    implement_constants, implement_constants_derived, implement_conversion, implement_display,
+    implement_hash, implement_infinity, implement_limit, implement_nan, implement_negate,
     implement_primitive_accessor, implement_primitive_accessor_derived,
-    implement_primitive_str_accessor, implement_primitive_str_accessor_derived,
+    implement_primitive_str_accessor, implement_primitive_str_accessor_derived, implement_scalable,
     implement_str_conversion, validate_struct, StrongTypeAttributes, TypeInfo, UnderlyingType,
     ValueTypeGroup,
 };
@@ -18,6 +18,8 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
     let name = &input.ident;
     let StrongTypeAttributes {
         has_auto_operators,
+        has_addable,
+        has_scalable,
         has_custom_display,
         has_conversion,
         type_info:
@@ -124,6 +126,32 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
                 ast.extend(implement_bool_ops(name));
             }
             ValueTypeGroup::Char(_) | ValueTypeGroup::String(_) => {}
+        }
+    } else if has_addable {
+        match &type_group {
+            ValueTypeGroup::Float(_) | ValueTypeGroup::Int(_) => {
+                ast.extend(implement_addable(name));
+                ast.extend(implement_negate(name));
+            }
+            ValueTypeGroup::UInt(_) => {
+                ast.extend(implement_addable(name));
+            }
+            ValueTypeGroup::Bool(_) | ValueTypeGroup::Char(_) | ValueTypeGroup::String(_) => {}
+        }
+    }
+
+    if has_scalable {
+        match &type_group {
+            ValueTypeGroup::Float(_) | ValueTypeGroup::Int(_) => {
+                ast.extend(implement_scalable(name, &value_type));
+                if !has_addable && !has_auto_operators {
+                    ast.extend(implement_negate(name));
+                }
+            }
+            ValueTypeGroup::UInt(_) => {
+                ast.extend(implement_scalable(name, &value_type));
+            }
+            ValueTypeGroup::Bool(_) | ValueTypeGroup::Char(_) | ValueTypeGroup::String(_) => {}
         }
     }
 

@@ -1,3 +1,4 @@
+mod addable;
 mod arithmetic;
 mod basic;
 mod basic_primitive;
@@ -10,9 +11,11 @@ mod display;
 mod hash;
 mod nan;
 mod negate;
+mod scalable;
 mod underlying_type_utils;
 mod utils;
 
+pub(crate) use addable::implement_addable;
 pub(crate) use arithmetic::implement_arithmetic;
 pub(crate) use basic::implement_basic;
 pub(crate) use basic_primitive::{
@@ -32,5 +35,6 @@ pub(crate) use display::implement_display;
 pub(crate) use hash::implement_hash;
 pub(crate) use nan::implement_nan;
 pub(crate) use negate::implement_negate;
+pub(crate) use scalable::implement_scalable;
 pub(crate) use underlying_type_utils::{get_type, TypeInfo, UnderlyingType, ValueTypeGroup};
 pub(crate) use utils::{get_attributes, validate_struct, StrongTypeAttributes};

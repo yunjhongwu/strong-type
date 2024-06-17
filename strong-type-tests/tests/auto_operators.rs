@@ -279,4 +279,51 @@ mod tests {
         x ^= y_ref;
         assert_eq!(x, Mask::new(54));
     }
+
+    #[test]
+    fn test_addable() {
+        #[derive(StrongType)]
+        #[strong_type(addable)]
+        struct Second(i32);
+
+        let a = Second(15);
+
+        assert_eq!(a + Second(2), Second(17));
+        assert_eq!(a + Second(3), Second(18));
+        assert_eq!(a + Second(4), Second(19));
+
+        let mut d = Second(10);
+        d += Second(2);
+        assert_eq!(d, Second(12));
+
+        d += Second(3);
+        assert_eq!(d, Second(15));
+
+        d += Second(4);
+        assert_eq!(d, Second(19));
+    }
+
+    #[test]
+    fn test_scalable() {
+        #[derive(StrongType)]
+        #[strong_type(scalable)]
+        struct Second(i32);
+
+        let a = Second(15);
+
+        assert_eq!(&a * 2_i32, Second(30));
+        assert_eq!(2_i32 * &a, Second(30));
+        assert_eq!(&a / 3_i32, Second(5));
+        assert_eq!(&a % 4_i32, Second(3));
+
+        let mut d = Second(10);
+        d *= 2_i32;
+        assert_eq!(d, Second(20));
+
+        d /= 4_i32;
+        assert_eq!(d, Second(5));
+
+        d %= 3_i32;
+        assert_eq!(d, Second(2));
+    }
 }
