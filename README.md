@@ -31,7 +31,7 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 Add `strong-type` to your `Cargo.toml`:
 ```toml
 [dependencies]
-strong-type = "0.11"
+strong-type = "0.12"
 ```
 
 ## Supported underlying types:
