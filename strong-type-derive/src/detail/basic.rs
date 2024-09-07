@@ -11,10 +11,6 @@ pub(crate) fn implement_basic(
             pub fn new(value: impl Into<#value_type>) -> Self {
                 Self(value.into())
             }
-
-            pub const fn const_new(value: #value_type) -> Self {
-                Self(value)
-            }
         }
 
         impl StrongType for #name {

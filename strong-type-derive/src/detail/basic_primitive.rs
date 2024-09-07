@@ -7,6 +7,10 @@ pub(crate) fn implement_basic_primitive(name: &syn::Ident, value_type: &syn::Ide
             pub fn value(&self) -> #value_type {
                 self.0
             }
+
+            pub const fn const_new(value: #value_type) -> Self {
+                Self(value)
+            }
         }
 
         impl Copy for #name {}
