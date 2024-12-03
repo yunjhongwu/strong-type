@@ -137,7 +137,6 @@ use strong_type::StrongType;
 
 #[derive(StrongType)]
 #[strong_type(auto_operators)]
-
 struct IsTrue(bool);
 
 let x = IsTrue::new(true);
@@ -157,7 +156,6 @@ use strong_type::StrongType;
 
 #[derive(StrongType)]
 #[strong_type(custom_display)]
-
 struct Second(f64);
 
 impl Display for Second {

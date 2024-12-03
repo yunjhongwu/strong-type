@@ -1,6 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use std::mem;
     use strong_type::StrongType;
 
     fn test_type<T: std::fmt::Debug + Clone + Send + Sync + Default + PartialEq>() {}
@@ -15,7 +14,7 @@ mod tests {
         #[strong_type(auto_operators, underlying=i32)]
         struct Cash(Dollar);
         test_type::<Cash>();
-        assert_eq!(mem::size_of::<Cash>(), mem::size_of::<i32>());
+        assert_eq!(size_of::<Cash>(), size_of::<i32>());
 
         assert_eq!(
             Cash::new(Dollar::new(10)),
@@ -32,7 +31,7 @@ mod tests {
         #[strong_type(underlying=i32)]
         struct Coin(Cash);
         test_type::<Coin>();
-        assert_eq!(mem::size_of::<Coin>(), mem::size_of::<i32>());
+        assert_eq!(size_of::<Coin>(), size_of::<i32>());
         assert_eq!(
             format!("{}", Coin::new(Cash::new(Dollar::new(10)))),
             "Coin(Cash(Dollar(10)))"
@@ -54,7 +53,7 @@ mod tests {
         struct Name(Tag);
 
         test_type::<Name>();
-        assert_eq!(mem::size_of::<Name>(), mem::size_of::<String>());
+        assert_eq!(size_of::<Name>(), size_of::<String>());
         assert_eq!(
             format!("{}", Name::new(Tag::new("tag".to_string()))),
             "Name(Tag(tag))"
@@ -63,7 +62,7 @@ mod tests {
         #[derive(StrongType)]
         #[strong_type(underlying=String)]
         struct Surname(Name);
-        assert_eq!(mem::size_of::<Surname>(), mem::size_of::<String>());
+        assert_eq!(size_of::<Surname>(), size_of::<String>());
         assert_eq!(
             format!("{}", Surname::new(Name::new(Tag::new("tag".to_string())))),
             "Surname(Name(Tag(tag)))"

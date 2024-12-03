@@ -2,7 +2,6 @@
 mod tests {
     use std::any::Any;
     use std::collections::HashSet;
-    use std::mem;
     use strong_type::StrongType;
 
     fn test_type<T: std::fmt::Debug + Clone + Send + Sync + Default + PartialEq>() {}
@@ -12,87 +11,87 @@ mod tests {
         #[derive(StrongType)]
         struct NamedI8(i8);
         test_type::<NamedI8>();
-        assert_eq!(mem::size_of::<NamedI8>(), mem::size_of::<i8>());
+        assert_eq!(size_of::<NamedI8>(), size_of::<i8>());
 
         #[derive(StrongType)]
         struct NamedI16(i16);
         test_type::<NamedI16>();
-        assert_eq!(mem::size_of::<NamedI16>(), mem::size_of::<i16>());
+        assert_eq!(size_of::<NamedI16>(), size_of::<i16>());
 
         #[derive(StrongType)]
         struct NamedI32(i32);
         test_type::<NamedI32>();
-        assert_eq!(mem::size_of::<NamedI32>(), mem::size_of::<i32>());
+        assert_eq!(size_of::<NamedI32>(), size_of::<i32>());
 
         #[derive(StrongType)]
         struct NamedI64(i64);
         test_type::<NamedI64>();
-        assert_eq!(mem::size_of::<NamedI64>(), mem::size_of::<i64>());
+        assert_eq!(size_of::<NamedI64>(), size_of::<i64>());
 
         #[derive(StrongType)]
         struct NamedI128(i128);
         test_type::<NamedI128>();
-        assert_eq!(mem::size_of::<NamedI128>(), mem::size_of::<i128>());
+        assert_eq!(size_of::<NamedI128>(), size_of::<i128>());
 
         #[derive(StrongType)]
         struct NamedISize(isize);
         test_type::<NamedISize>();
-        assert_eq!(mem::size_of::<NamedISize>(), mem::size_of::<isize>());
+        assert_eq!(size_of::<NamedISize>(), size_of::<isize>());
 
         #[derive(StrongType)]
         struct NamedU8(u8);
         test_type::<NamedU8>();
-        assert_eq!(mem::size_of::<NamedU8>(), mem::size_of::<u8>());
+        assert_eq!(size_of::<NamedU8>(), size_of::<u8>());
 
         #[derive(StrongType)]
         struct NamedU16(u16);
         test_type::<NamedU16>();
-        assert_eq!(mem::size_of::<NamedU16>(), mem::size_of::<u16>());
+        assert_eq!(size_of::<NamedU16>(), size_of::<u16>());
 
         #[derive(StrongType)]
         struct NamedU32(u32);
         test_type::<NamedU32>();
-        assert_eq!(mem::size_of::<NamedU32>(), mem::size_of::<u32>());
+        assert_eq!(size_of::<NamedU32>(), size_of::<u32>());
 
         #[derive(StrongType)]
         struct NamedU64(u64);
         test_type::<NamedU64>();
-        assert_eq!(mem::size_of::<NamedU64>(), mem::size_of::<u64>());
+        assert_eq!(size_of::<NamedU64>(), size_of::<u64>());
 
         #[derive(StrongType)]
         struct NamedU128(u128);
         test_type::<NamedU128>();
-        assert_eq!(mem::size_of::<NamedU128>(), mem::size_of::<u128>());
+        assert_eq!(size_of::<NamedU128>(), size_of::<u128>());
 
         #[derive(StrongType)]
         struct NamedUSize(usize);
         test_type::<NamedUSize>();
-        assert_eq!(mem::size_of::<NamedUSize>(), mem::size_of::<usize>());
+        assert_eq!(size_of::<NamedUSize>(), size_of::<usize>());
 
         #[derive(StrongType)]
         struct NamedF32(f32);
         test_type::<NamedF32>();
-        assert_eq!(mem::size_of::<NamedF32>(), mem::size_of::<f32>());
+        assert_eq!(size_of::<NamedF32>(), size_of::<f32>());
 
         #[derive(StrongType)]
         struct NamedF64(f64);
         test_type::<NamedF64>();
-        assert_eq!(mem::size_of::<NamedF64>(), mem::size_of::<f64>());
+        assert_eq!(size_of::<NamedF64>(), size_of::<f64>());
 
         #[derive(StrongType)]
         struct NamedBool(bool);
         test_type::<NamedBool>();
-        assert_eq!(mem::size_of::<NamedBool>(), mem::size_of::<bool>());
+        assert_eq!(size_of::<NamedBool>(), size_of::<bool>());
 
         #[derive(StrongType)]
         struct NamedChar(char);
         test_type::<NamedChar>();
-        assert_eq!(mem::size_of::<NamedChar>(), mem::size_of::<char>());
+        assert_eq!(size_of::<NamedChar>(), size_of::<char>());
 
         #[derive(StrongType)]
         struct NamedString(String);
         test_type::<NamedString>();
-        assert_eq!(mem::size_of::<NamedString>(), mem::size_of::<String>());
+        assert_eq!(size_of::<NamedString>(), size_of::<String>());
     }
 
     #[test]
