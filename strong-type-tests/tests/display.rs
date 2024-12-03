@@ -12,7 +12,6 @@ mod tests {
 
         #[derive(StrongType)]
         #[strong_type(custom_display)]
-
         struct Mile(f64);
 
         impl Display for Mile {
