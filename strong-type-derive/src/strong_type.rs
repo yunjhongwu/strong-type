@@ -1,12 +1,12 @@
 use crate::detail::{
-    get_attributes, implement_addable, implement_arithmetic, implement_basic,
-    implement_basic_primitive, implement_basic_string, implement_bit_shift, implement_bool_ops,
-    implement_constants, implement_constants_derived, implement_conversion, implement_display,
-    implement_hash, implement_infinity, implement_limit, implement_nan, implement_negate,
+    StrongTypeAttributes, TypeInfo, UnderlyingType, ValueTypeGroup, get_attributes,
+    implement_addable, implement_arithmetic, implement_basic, implement_basic_primitive,
+    implement_basic_string, implement_bit_shift, implement_bool_ops, implement_constants,
+    implement_constants_derived, implement_conversion, implement_display, implement_hash,
+    implement_infinity, implement_limit, implement_nan, implement_negate,
     implement_primitive_accessor, implement_primitive_accessor_derived,
     implement_primitive_str_accessor, implement_primitive_str_accessor_derived, implement_scalable,
-    implement_str_conversion, validate_struct, StrongTypeAttributes, TypeInfo, UnderlyingType,
-    ValueTypeGroup,
+    implement_str_conversion, validate_struct,
 };
 use proc_macro2::TokenStream;
 use quote::quote;
