@@ -1,5 +1,5 @@
 use crate::detail::underlying_type_utils::get_type_group;
-use crate::detail::{get_type, TypeInfo, UnderlyingType};
+use crate::detail::{TypeInfo, UnderlyingType, get_type};
 use syn::{Data, DeriveInput, Fields};
 
 pub(crate) struct StrongTypeAttributes {

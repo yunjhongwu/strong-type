@@ -1,8 +1,8 @@
 [package]
 name = "strong-type"
 description = "Procedural macros for naming and strong-typing pritimives and strings"
-version = "0.12.2"
-edition = "2021"
+version = "0.12.3"
+edition = "2024"
 
 license = "MIT OR Apache-2.0"
 keywords = ["primitive", "string", "strongly-typed"]
