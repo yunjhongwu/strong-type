@@ -1,8 +1,10 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
+use super::macros::{impl_bitand, impl_bitor, impl_bitxor};
+
 pub(crate) fn implement_bool_ops(name: &syn::Ident) -> TokenStream {
-    quote! {
+    let not_impl = quote! {
         impl std::ops::Not for #name {
              type Output = Self;
 
@@ -18,137 +20,16 @@ pub(crate) fn implement_bool_ops(name: &syn::Ident) -> TokenStream {
                  #name::new(!self.value())
              }
         }
+    };
 
-        impl std::ops::BitAnd<Self> for #name {
-            type Output = Self;
+    let bit_and_traits = impl_bitand(name);
+    let bit_or_traits = impl_bitor(name);
+    let bit_xor_traits = impl_bitxor(name);
 
-            fn bitand(self, rhs: Self) -> Self::Output {
-                Self::new(self.value() & rhs.value())
-            }
-        }
-
-        impl std::ops::BitAnd<&Self> for #name {
-            type Output = Self;
-
-            fn bitand(self, rhs: &Self) -> Self::Output {
-                Self::new(self.value() & rhs.value())
-            }
-        }
-
-        impl std::ops::BitAnd<#name> for &#name {
-            type Output = #name;
-
-            fn bitand(self, rhs: #name) -> Self::Output {
-                #name::new(self.value() & rhs.value())
-            }
-        }
-
-        impl std::ops::BitAnd<&#name> for &#name {
-            type Output = #name;
-
-            fn bitand(self, rhs: &#name) -> Self::Output {
-                #name::new(self.value() & rhs.value())
-            }
-        }
-
-        impl std::ops::BitAndAssign<Self> for #name {
-            fn bitand_assign(&mut self, rhs: Self) {
-                self.0 &= rhs.value()
-            }
-        }
-
-        impl std::ops::BitAndAssign<&Self> for #name {
-            fn bitand_assign(&mut self, rhs: &Self) {
-                self.0 &= rhs.value()
-            }
-        }
-
-        impl std::ops::BitOr<Self> for #name {
-            type Output = Self;
-
-            fn bitor(self, rhs: Self) -> Self::Output {
-                Self::new(self.value() | rhs.value())
-            }
-        }
-
-        impl std::ops::BitOr<&Self> for #name {
-            type Output = Self;
-
-            fn bitor(self, rhs: &Self) -> Self::Output {
-                Self::new(self.value() | rhs.value())
-            }
-        }
-
-        impl std::ops::BitOr<#name> for &#name {
-            type Output = #name;
-
-            fn bitor(self, rhs: #name) -> Self::Output {
-                #name::new(self.value() | rhs.value())
-            }
-        }
-
-        impl std::ops::BitOr<&#name> for &#name {
-            type Output = #name;
-
-            fn bitor(self, rhs: &#name) -> Self::Output {
-                #name::new(self.value() | rhs.value())
-            }
-        }
-
-        impl std::ops::BitOrAssign<Self> for #name {
-            fn bitor_assign(&mut self, rhs: Self) {
-                self.0 |= rhs.value()
-            }
-        }
-
-        impl std::ops::BitOrAssign<&Self> for #name {
-            fn bitor_assign(&mut self, rhs: &Self) {
-                self.0 |= rhs.value()
-            }
-        }
-
-        impl std::ops::BitXor<Self> for #name {
-            type Output = Self;
-
-            fn bitxor(self, rhs: Self) -> Self::Output {
-                Self::new(self.value() ^ rhs.value())
-            }
-        }
-
-        impl std::ops::BitXor<&Self> for #name {
-            type Output = Self;
-
-            fn bitxor(self, rhs: &Self) -> Self::Output {
-                Self::new(self.value() ^ rhs.value())
-            }
-        }
-
-        impl std::ops::BitXor<#name> for &#name {
-            type Output = #name;
-
-            fn bitxor(self, rhs: #name) -> Self::Output {
-                #name::new(self.value() ^ rhs.value())
-            }
-        }
-
-        impl std::ops::BitXor<&#name> for &#name {
-            type Output = #name;
-
-            fn bitxor(self, rhs: &#name) -> Self::Output {
-                #name::new(self.value() ^ rhs.value())
-            }
-        }
-
-        impl std::ops::BitXorAssign<Self> for #name {
-            fn bitxor_assign(&mut self, rhs: Self) {
-                self.0 ^= rhs.value()
-            }
-        }
-
-        impl std::ops::BitXorAssign<&Self> for #name {
-            fn bitxor_assign(&mut self, rhs: &Self) {
-                self.0 ^= rhs.value()
-            }
-        }
+    quote! {
+        #not_impl
+        #bit_and_traits
+        #bit_or_traits
+        #bit_xor_traits
     }
 }

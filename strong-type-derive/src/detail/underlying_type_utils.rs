@@ -58,21 +58,24 @@ pub(crate) fn get_type_group(
 }
 
 fn get_type_ident(input: &DeriveInput) -> Option<syn::Ident> {
-    if let Data::Struct(ref data_struct) = input.data {
-        if let Type::Path(path) = &data_struct.fields.iter().next().unwrap().ty {
-            return Some(path.path.segments.last().unwrap().ident.clone());
-        }
+    if let Data::Struct(ref data_struct) = input.data
+        && let Type::Path(path) = &data_struct.fields.iter().next().unwrap().ty
+    {
+        return Some(path.path.segments.last().unwrap().ident.clone());
     }
     None
 }
 
-pub(crate) fn get_type(input: &DeriveInput) -> TypeInfo {
+pub(crate) fn get_type(input: &DeriveInput) -> Result<TypeInfo, syn::Error> {
     if let Some(value_type) = get_type_ident(input) {
-        return TypeInfo {
+        return Ok(TypeInfo {
             primitive_type: value_type.clone(),
             value_type: value_type.clone(),
             type_group: get_type_group(&value_type, UnderlyingType::Primitive),
-        };
+        });
     }
-    panic!("Unable to find underlying value type");
+    Err(syn::Error::new_spanned(
+        input,
+        "Unable to find underlying value type. Strong type must be a tuple struct with exactly one field.",
+    ))
 }

@@ -11,19 +11,19 @@ pub(crate) struct StrongTypeAttributes {
     pub type_info: TypeInfo,
 }
 
-pub(crate) fn get_attributes(input: &DeriveInput) -> StrongTypeAttributes {
+pub(crate) fn get_attributes(input: &DeriveInput) -> Result<StrongTypeAttributes, syn::Error> {
     let mut attributes = StrongTypeAttributes {
         has_auto_operators: false,
         has_custom_display: false,
         has_conversion: false,
         has_addable: false,
         has_scalable: false,
-        type_info: get_type(input),
+        type_info: get_type(input)?,
     };
 
     for attr in input.attrs.iter() {
         if attr.path().is_ident("strong_type") {
-            if let Err(message) = attr.parse_nested_meta(|meta| {
+            attr.parse_nested_meta(|meta| {
                 if meta.path.is_ident("auto_operators") {
                     attributes.has_auto_operators = true;
                     Ok(())
@@ -45,29 +45,28 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> StrongTypeAttributes {
                             attributes.type_info.type_group = get_type_group(&primitive_type, UnderlyingType::Derived);
                             attributes.type_info.primitive_type = primitive_type;
                         } else {
-                            panic!("Failed to parse custom underlying {}", strm);
+                            return Err(meta.error("Failed to parse custom underlying type. Expected a type identifier."));
                         }
                     }
                     Ok(())
                 } else {
-                    Err(meta.error(format!("Invalid strong_type attribute {}, should be one of {{auto_operators, addable, scalable, custom_display, conversion, underlying=type}}",
-                                           meta.path.get_ident().expect("Failed to parse strong_type attributes."))))
+                    Err(meta.error("Invalid strong_type attribute. Valid attributes are: auto_operators, addable, scalable, custom_display, conversion, underlying=<type>"))
                 }
-            }) {
-                panic!("{}", message);
-            }
+            })?;
         }
     }
-    attributes
+    Ok(attributes)
 }
 
-pub(crate) fn validate_struct(input: &DeriveInput) {
-    if let Data::Struct(data_struct) = &input.data {
-        if let Fields::Unnamed(fields_unnamed) = &data_struct.fields {
-            if fields_unnamed.unnamed.len() == 1 {
-                return;
-            }
-        }
+pub(crate) fn validate_struct(input: &DeriveInput) -> Result<(), syn::Error> {
+    if let Data::Struct(data_struct) = &input.data
+        && let Fields::Unnamed(fields_unnamed) = &data_struct.fields
+        && fields_unnamed.unnamed.len() == 1
+    {
+        return Ok(());
     };
-    panic!("Strong type must be a tuple struct with exactly one field.");
+    Err(syn::Error::new_spanned(
+        input,
+        "StrongType can only be derived for tuple structs with exactly one field. Example: struct MyType(i32);",
+    ))
 }

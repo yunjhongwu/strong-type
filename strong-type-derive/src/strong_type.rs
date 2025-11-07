@@ -13,7 +13,14 @@ use quote::quote;
 use syn::DeriveInput;
 
 pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
-    validate_struct(&input);
+    match expand_strong_type_impl(input) {
+        Ok(tokens) => tokens,
+        Err(err) => err.to_compile_error(),
+    }
+}
+
+fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error> {
+    validate_struct(&input)?;
 
     let name = &input.ident;
     let StrongTypeAttributes {
@@ -28,9 +35,14 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
                 value_type,
                 type_group,
             },
-    } = get_attributes(&input);
-    let type_group = type_group
-        .unwrap_or_else(|| panic!("Unable to determine the primitive type of {}", value_type));
+    } = get_attributes(&input)?;
+
+    let type_group = type_group.ok_or_else(|| {
+        syn::Error::new_spanned(
+            &input,
+            format!("Unable to determine the primitive type of '{}'. Supported types are: i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize, f32, f64, bool, char, String", value_type),
+        )
+    })?;
 
     let mut ast = quote!();
     ast.extend(implement_basic(name, &value_type, &primitive_type));
@@ -107,53 +119,57 @@ pub(super) fn expand_strong_type(input: DeriveInput) -> TokenStream {
         }
     }
 
-    if has_auto_operators {
-        match &type_group {
-            ValueTypeGroup::Float(_) => {
+    // Consolidate operator implementations in a single match to avoid repeated pattern matching
+    match &type_group {
+        ValueTypeGroup::Float(_) => {
+            if has_auto_operators {
                 ast.extend(implement_arithmetic(name));
                 ast.extend(implement_negate(name));
-            }
-            ValueTypeGroup::Int(_) => {
-                ast.extend(implement_arithmetic(name));
-                ast.extend(implement_negate(name));
-                ast.extend(implement_bit_shift(name));
-            }
-            ValueTypeGroup::UInt(_) => {
-                ast.extend(implement_arithmetic(name));
-                ast.extend(implement_bit_shift(name));
-            }
-            ValueTypeGroup::Bool(_) => {
-                ast.extend(implement_bool_ops(name));
-            }
-            ValueTypeGroup::Char(_) | ValueTypeGroup::String(_) => {}
-        }
-    } else if has_addable {
-        match &type_group {
-            ValueTypeGroup::Float(_) | ValueTypeGroup::Int(_) => {
+            } else if has_addable {
                 ast.extend(implement_addable(name));
                 ast.extend(implement_negate(name));
             }
-            ValueTypeGroup::UInt(_) => {
-                ast.extend(implement_addable(name));
-            }
-            ValueTypeGroup::Bool(_) | ValueTypeGroup::Char(_) | ValueTypeGroup::String(_) => {}
-        }
-    }
-
-    if has_scalable {
-        match &type_group {
-            ValueTypeGroup::Float(_) | ValueTypeGroup::Int(_) => {
+            if has_scalable {
                 ast.extend(implement_scalable(name, &value_type));
                 if !has_addable && !has_auto_operators {
                     ast.extend(implement_negate(name));
                 }
             }
-            ValueTypeGroup::UInt(_) => {
+        }
+        ValueTypeGroup::Int(_) => {
+            if has_auto_operators {
+                ast.extend(implement_arithmetic(name));
+                ast.extend(implement_negate(name));
+                ast.extend(implement_bit_shift(name));
+            } else if has_addable {
+                ast.extend(implement_addable(name));
+                ast.extend(implement_negate(name));
+            }
+            if has_scalable {
+                ast.extend(implement_scalable(name, &value_type));
+                if !has_addable && !has_auto_operators {
+                    ast.extend(implement_negate(name));
+                }
+            }
+        }
+        ValueTypeGroup::UInt(_) => {
+            if has_auto_operators {
+                ast.extend(implement_arithmetic(name));
+                ast.extend(implement_bit_shift(name));
+            } else if has_addable {
+                ast.extend(implement_addable(name));
+            }
+            if has_scalable {
                 ast.extend(implement_scalable(name, &value_type));
             }
-            ValueTypeGroup::Bool(_) | ValueTypeGroup::Char(_) | ValueTypeGroup::String(_) => {}
         }
+        ValueTypeGroup::Bool(_) => {
+            if has_auto_operators {
+                ast.extend(implement_bool_ops(name));
+            }
+        }
+        ValueTypeGroup::Char(_) | ValueTypeGroup::String(_) => {}
     }
 
-    ast
+    Ok(ast)
 }
