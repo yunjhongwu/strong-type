@@ -56,9 +56,7 @@ fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error
         | ValueTypeGroup::Float(underlying_type)
         | ValueTypeGroup::Bool(underlying_type)
         | ValueTypeGroup::Char(underlying_type) => match underlying_type {
-            UnderlyingType::Primitive => {
-                ast.extend(implement_primitive_accessor(name, value_type))
-            }
+            UnderlyingType::Primitive => ast.extend(implement_primitive_accessor(name, value_type)),
             UnderlyingType::Derived => {
                 ast.extend(implement_primitive_accessor_derived(name, primitive_type))
             }
