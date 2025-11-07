@@ -11,9 +11,21 @@ pub(crate) fn implement_basic(
             pub fn new(value: impl Into<#value_type>) -> Self {
                 Self(value.into())
             }
+
+            pub fn into_inner(self) -> #value_type {
+                self.0
+            }
+
+            pub fn as_ref(&self) -> &#value_type {
+                &self.0
+            }
+
+            pub fn as_mut(&mut self) -> &mut #value_type {
+                &mut self.0
+            }
         }
 
-        impl StrongType for #name {
+        impl ::strong_type::StrongType for #name {
             type UnderlyingType = #value_type;
             type PrimitiveType = #primitive_type;
         }
@@ -26,7 +38,10 @@ pub(crate) fn implement_basic(
             }
         }
 
-        impl std::default::Default for #name {
+        impl std::default::Default for #name
+        where
+            #value_type: std::default::Default,
+        {
             fn default() -> Self {
                 Self::new(#value_type::default())
             }
@@ -38,8 +53,16 @@ pub(crate) fn implement_basic(
             }
         }
 
-        unsafe impl Send for #name {}
+        impl std::convert::AsRef<#value_type> for #name {
+            fn as_ref(&self) -> &#value_type {
+                #name::as_ref(self)
+            }
+        }
 
-        unsafe impl Sync for #name {}
+        impl std::convert::AsMut<#value_type> for #name {
+            fn as_mut(&mut self) -> &mut #value_type {
+                #name::as_mut(self)
+            }
+        }
     }
 }

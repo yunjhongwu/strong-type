@@ -1,5 +1,9 @@
 mod auto_operators;
 mod conversion;
 mod custom_underlying;
+mod delegated_operators;
+mod diagnostics;
 mod display;
+mod ergonomics;
+mod minimal_operators;
 mod strong_type;

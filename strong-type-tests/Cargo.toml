@@ -1,7 +1,7 @@
 [package]
 name = "strong-type-tests"
 version = "0.0.0"
-edition = "2021"
+edition = "2024"
 publish = false
 
 [dependencies]
@@ -10,3 +10,27 @@ strong-type = { path = "../strong-type" }
 [[test]]
 name = "unit-test"
 path = "tests/tests.rs"
+
+[[example]]
+name = "perf_single_auto"
+path = "perf_tests/perf_single_auto.rs"
+
+[[example]]
+name = "perf_single_minimal"
+path = "perf_tests/perf_single_minimal.rs"
+
+[[example]]
+name = "perf_five_auto"
+path = "perf_tests/perf_five_auto.rs"
+
+[[example]]
+name = "perf_ten_auto"
+path = "perf_tests/perf_ten_auto.rs"
+
+[[example]]
+name = "perf_addable_scalable"
+path = "perf_tests/perf_addable_scalable.rs"
+
+[dev-dependencies]
+trybuild = "1"
+static_assertions = "1"

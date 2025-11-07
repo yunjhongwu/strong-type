@@ -4,7 +4,7 @@ members = [
     "strong-type-derive",
     "strong-type-tests"
 ]
-resolver = "2"
+resolver = "3"
 
 [patch.crates-io]
 strong-type = { path = "strong-type" }

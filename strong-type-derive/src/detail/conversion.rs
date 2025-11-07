@@ -14,6 +14,27 @@ pub(crate) fn implement_conversion(name: &syn::Ident, value_type: &syn::Ident) -
                 value.0
             }
         }
+
+        impl<'a> From<&'a #value_type> for #name
+        where
+            #value_type: Clone,
+        {
+            fn from(value: &'a #value_type) -> Self {
+                Self::new(value.clone())
+            }
+        }
+
+        impl<'a> From<&'a #name> for &'a #value_type {
+            fn from(value: &'a #name) -> Self {
+                value.as_ref()
+            }
+        }
+
+        impl<'a> From<&'a mut #name> for &'a mut #value_type {
+            fn from(value: &'a mut #name) -> Self {
+                value.as_mut()
+            }
+        }
     }
 }
 

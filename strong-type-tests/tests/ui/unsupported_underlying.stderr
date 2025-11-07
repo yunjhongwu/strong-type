@@ -1,0 +1,5 @@
+error: Unsupported underlying primitive 'primitive'. Supported primitives are: i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize, f32, f64, bool, char, String
+ --> tests/ui/unsupported_underlying.rs:7:15
+  |
+7 | #[strong_type(underlying=not::a::primitive)]
+  |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

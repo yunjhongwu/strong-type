@@ -2,7 +2,7 @@ mod detail;
 mod strong_type;
 
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, DeriveInput};
+use syn::{DeriveInput, parse_macro_input};
 
 use crate::strong_type::expand_strong_type;
 
