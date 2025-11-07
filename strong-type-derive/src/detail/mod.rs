@@ -9,6 +9,7 @@ mod constants;
 mod conversion;
 mod display;
 mod hash;
+mod macros;
 mod nan;
 mod negate;
 mod scalable;

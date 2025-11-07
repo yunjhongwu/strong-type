@@ -1,6 +1,8 @@
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 
+use super::macros::{impl_bitand, impl_bitor, impl_bitxor};
+
 pub(crate) fn implement_bit_shift_impl(name: &syn::Ident, type_name_str: &str) -> TokenStream {
     let type_name = syn::Ident::new(type_name_str, Span::call_site());
     quote! {
@@ -50,169 +52,23 @@ pub(crate) fn implement_bit_shift_impl(name: &syn::Ident, type_name_str: &str) -
     }
 }
 
-pub(crate) fn implement_bit_and(name: &syn::Ident) -> TokenStream {
-    quote! {
-        impl std::ops::BitAnd<Self> for #name {
-            type Output = Self;
-            fn bitand(self, rhs: Self) -> Self::Output {
-                Self::new(self.value() & rhs.value())
-            }
-        }
-
-        impl std::ops::BitAnd<&Self> for #name {
-            type Output = Self;
-            fn bitand(self, rhs: &Self) -> Self::Output {
-                Self::new(self.value() & rhs.value())
-            }
-        }
-
-        impl<'a> std::ops::BitAnd<#name> for &'a #name {
-            type Output = #name;
-            fn bitand(self, rhs: #name) -> Self::Output {
-                #name::new(self.value() & rhs.value())
-            }
-        }
-
-        impl<'a> std::ops::BitAnd<&#name> for &'a #name {
-            type Output = #name;
-            fn bitand(self, rhs: &#name) -> Self::Output {
-                #name::new(self.value() & rhs.value())
-            }
-        }
-
-        impl std::ops::BitAndAssign<Self> for #name {
-            fn bitand_assign(&mut self, rhs: Self) {
-                self.0 &= rhs.value()
-            }
-        }
-
-        impl std::ops::BitAndAssign<&Self> for #name {
-            fn bitand_assign(&mut self, rhs: &Self) {
-                self.0 &= rhs.value()
-            }
-        }
-    }
-}
-
-pub(crate) fn implement_bit_or(name: &syn::Ident) -> TokenStream {
-    quote! {
-        impl std::ops::BitOr<Self> for #name {
-            type Output = Self;
-            fn bitor(self, rhs: Self) -> Self::Output {
-                Self::new(self.value() | rhs.value())
-            }
-        }
-
-        impl std::ops::BitOr<&Self> for #name {
-            type Output = Self;
-            fn bitor(self, rhs: &Self) -> Self::Output {
-                Self::new(self.value() | rhs.value())
-            }
-        }
-
-        impl<'a> std::ops::BitOr<#name> for &'a #name {
-            type Output = #name;
-            fn bitor(self, rhs: #name) -> Self::Output {
-                #name::new(self.value() | rhs.value())
-            }
-        }
-
-        impl<'a> std::ops::BitOr<&#name> for &'a #name {
-            type Output = #name;
-            fn bitor(self, rhs: &#name) -> Self::Output {
-                #name::new(self.value() | rhs.value())
-            }
-        }
-
-        impl std::ops::BitOrAssign<Self> for #name {
-            fn bitor_assign(&mut self, rhs: Self) {
-                self.0 |= rhs.value()
-            }
-        }
-
-        impl std::ops::BitOrAssign<&Self> for #name {
-            fn bitor_assign(&mut self, rhs: &Self) {
-                self.0 |= rhs.value()
-            }
-        }
-    }
-}
-
-pub(crate) fn implement_bit_xor(name: &syn::Ident) -> TokenStream {
-    quote! {
-        impl std::ops::BitXor<Self> for #name {
-            type Output = Self;
-            fn bitxor(self, rhs: Self) -> Self::Output {
-                Self::new(self.value() ^ rhs.value())
-            }
-        }
-
-        impl std::ops::BitXor<&Self> for #name {
-            type Output = Self;
-            fn bitxor(self, rhs: &Self) -> Self::Output {
-                Self::new(self.value() ^ rhs.value())
-            }
-        }
-
-        impl<'a> std::ops::BitXor<#name> for &'a #name {
-            type Output = #name;
-            fn bitxor(self, rhs: #name) -> Self::Output {
-                #name::new(self.value() ^ rhs.value())
-            }
-        }
-
-        impl<'a> std::ops::BitXor<&#name> for &'a #name {
-            type Output = #name;
-            fn bitxor(self, rhs: &#name) -> Self::Output {
-                #name::new(self.value() ^ rhs.value())
-            }
-        }
-
-        impl std::ops::BitXorAssign<Self> for #name {
-            fn bitxor_assign(&mut self, rhs: Self) {
-                self.0 ^= rhs.value()
-            }
-        }
-
-        impl std::ops::BitXorAssign<&Self> for #name {
-            fn bitxor_assign(&mut self, rhs: &Self) {
-                self.0 ^= rhs.value()
-            }
-        }
-    }
-}
-
 pub(crate) fn implement_bit_shift(name: &syn::Ident) -> TokenStream {
-    let traits_for_i8 = implement_bit_shift_impl(name, "i8");
-    let traits_for_i16 = implement_bit_shift_impl(name, "i16");
-    let traits_for_i32 = implement_bit_shift_impl(name, "i32");
-    let traits_for_i64 = implement_bit_shift_impl(name, "i64");
-    let traits_for_i128 = implement_bit_shift_impl(name, "i128");
-    let traits_for_isize = implement_bit_shift_impl(name, "isize");
-    let traits_for_u8 = implement_bit_shift_impl(name, "u8");
-    let traits_for_u16 = implement_bit_shift_impl(name, "u16");
-    let traits_for_u32 = implement_bit_shift_impl(name, "u32");
-    let traits_for_u64 = implement_bit_shift_impl(name, "u64");
-    let traits_for_u128 = implement_bit_shift_impl(name, "u128");
-    let traits_for_usize = implement_bit_shift_impl(name, "usize");
+    // Priority 2: Consolidate bit shift type loop
+    const SHIFT_TYPES: &[&str] = &[
+        "i8", "i16", "i32", "i64", "i128", "isize", "u8", "u16", "u32", "u64", "u128", "usize",
+    ];
 
-    let bit_and_traits = implement_bit_and(name);
-    let bit_or_traits = implement_bit_or(name);
-    let bit_xor_traits = implement_bit_xor(name);
+    let mut shift_impls = TokenStream::new();
+    for shift_type in SHIFT_TYPES {
+        shift_impls.extend(implement_bit_shift_impl(name, shift_type));
+    }
+
+    let bit_and_traits = impl_bitand(name);
+    let bit_or_traits = impl_bitor(name);
+    let bit_xor_traits = impl_bitxor(name);
 
     quote! {
-        #traits_for_i8
-        #traits_for_i16
-        #traits_for_i32
-        #traits_for_i64
-        #traits_for_i128
-        #traits_for_isize
-        #traits_for_u8
-        #traits_for_u16
-        #traits_for_u32
-        #traits_for_u64
-        #traits_for_u128
-        #traits_for_usize
+        #shift_impls
         #bit_and_traits
         #bit_or_traits
         #bit_xor_traits

@@ -66,13 +66,16 @@ fn get_type_ident(input: &DeriveInput) -> Option<syn::Ident> {
     None
 }
 
-pub(crate) fn get_type(input: &DeriveInput) -> TypeInfo {
+pub(crate) fn get_type(input: &DeriveInput) -> Result<TypeInfo, syn::Error> {
     if let Some(value_type) = get_type_ident(input) {
-        return TypeInfo {
+        return Ok(TypeInfo {
             primitive_type: value_type.clone(),
             value_type: value_type.clone(),
             type_group: get_type_group(&value_type, UnderlyingType::Primitive),
-        };
+        });
     }
-    panic!("Unable to find underlying value type");
+    Err(syn::Error::new_spanned(
+        input,
+        "Unable to find underlying value type. Strong type must be a tuple struct with exactly one field.",
+    ))
 }
