@@ -58,10 +58,10 @@ pub(crate) fn get_type_group(
 }
 
 fn get_type_ident(input: &DeriveInput) -> Option<syn::Ident> {
-    if let Data::Struct(ref data_struct) = input.data {
-        if let Type::Path(path) = &data_struct.fields.iter().next().unwrap().ty {
-            return Some(path.path.segments.last().unwrap().ident.clone());
-        }
+    if let Data::Struct(ref data_struct) = input.data
+        && let Type::Path(path) = &data_struct.fields.iter().next().unwrap().ty
+    {
+        return Some(path.path.segments.last().unwrap().ident.clone());
     }
     None
 }

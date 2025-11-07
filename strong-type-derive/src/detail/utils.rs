@@ -59,12 +59,11 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> Result<StrongTypeAttributes
 }
 
 pub(crate) fn validate_struct(input: &DeriveInput) -> Result<(), syn::Error> {
-    if let Data::Struct(data_struct) = &input.data {
-        if let Fields::Unnamed(fields_unnamed) = &data_struct.fields {
-            if fields_unnamed.unnamed.len() == 1 {
-                return Ok(());
-            }
-        }
+    if let Data::Struct(data_struct) = &input.data
+        && let Fields::Unnamed(fields_unnamed) = &data_struct.fields
+        && fields_unnamed.unnamed.len() == 1
+    {
+        return Ok(());
     };
     Err(syn::Error::new_spanned(
         input,
