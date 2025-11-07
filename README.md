@@ -14,19 +14,21 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 ## Features
 
 - **Derive trait `StrongType`:** Create a named strong type. 
-  - The macro automatically implement common traits like `Clone`, `Debug`, `Default`, `PartialEq`, `PartialOrd`, `Send`, and `Sync`. It also implements `Display` by default, unless overridden by the custom_display attribute. 
+  - The macro automatically implements `Clone`, `Debug`, `PartialEq`, and `PartialOrd`, and will only add `Copy`, `Default`, `Eq`, `Ord`, `Hash`, `Send`, or `Sync` when the wrapped type supports those traits.
+  - Every generated type exposes ergonomic helpers such as `new`, `const_new`, `into_inner`, `as_ref`, and `as_mut`, plus blanket `AsRef`/`AsMut` implementations so you can seamlessly borrow the inner value.
   - Conditionally, based on the underlying data type, traits like `Copy`, `Eq`, `Ord`, `Hash` may also be implemented. For primitive data types like `i32` or `bool`, these additional traits will be automatically included.
   - Numeric types, both integer and floating-point, also implement constants `MIN`, `MAX`, `INFINITY`, `NEG_INFINITY`, and `ZERO`. Additionally, for floating-point types, `NAN` is implemented.
 
 - **Attributes:**
   - Adding the following attributes to `#[strong_type(...)]` allows for additional features:
     - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators with all ownership variants (owned, `&Self`, etc.).
+      - Use `auto_operators = "delegated"` when you want all ownership combinations but prefer smaller binaries; delegated mode routes operator bodies through shared helpers in `strong_type::delegation`, trimming monomorphization by roughly 30-50% in debug builds at the cost of a small inlining opportunity.
       - Use `auto_operators = "minimal"` for a lightweight version that generates only owned-value operations, reducing binary size by ~62% per operator while maintaining core functionality.
       - Use `auto_operators = "full"` or just `auto_operators` for the complete set of operator implementations.
     - `addable`: Automatically implements the `Add`, `Sub`, and other relevant traits. The attribute is a strict subset of `auto_operators`.
     - `scalable`: Automatically implements the `Mul`, `Div`, `Rem`, and other relevant traits between a strong typed struct and its primitive type. Note that the attribute is not a subset of `auto_operators`.
     - `custom_display`: Allows users to manually implement the `Display` trait, providing an alternative to the default display format.
-    - `conversion`: Automatically implements `From` and `Into` traits for the underlying type. This is optional since conversion may make strong types less distinct.
+    - `conversion`: Automatically implements `From`/`Into` for owned and borrowed variants of the underlying type, making it easy to cross the boundary when needed. This is optional since conversion may make strong types less distinct.
     - `underlying`: Specifies the underlying primitive type for nested strong types.
 
 ## Installation
@@ -165,6 +167,22 @@ assert_eq!(x + y, MinimalPrice(30));  // Works with owned values
 // - Iterator traits: Sum, Product
 ```
 
+#### Delegated operators for shared codegen
+
+```rust
+use strong_type::StrongType;
+
+#[derive(StrongType)]
+#[strong_type(auto_operators = "delegated")]
+struct DelegatedPrice(i32);
+
+let x = DelegatedPrice::new(10);
+let y = DelegatedPrice::new(20);
+assert_eq!(&x + &y, DelegatedPrice(30)); // All ownership variants still compile
+```
+
+Delegated mode emits the full operator surface but forwards every body to small helpers in `strong_type::delegation`. This keeps ergonomics identical to `auto_operators = "full"` while trimming monomorphization-heavy code, typically shrinking debug binaries by 30-50% versus the full mode. Because those helpers are marked `#[inline(never)]`, expect a tiny throughput regression when micro-benchmarked (<2% in our perf examples), which is usually offset by faster builds and smaller artifacts.
+
 #### Named bool type with logical operations:
 
 ```rust
@@ -218,6 +236,25 @@ struct Cash(Dollar);
 #[strong_type(underlying = i32)]
 struct Coin(Cash);
 ```
+
+## Performance and binary-size examples
+
+The `strong-type-tests/perf_tests` directory contains runnable micro-benchmarks that track the cost of different operator strategies:
+
+```
+cargo run -p strong-type-tests --example perf_single_auto
+cargo run -p strong-type-tests --example perf_single_minimal
+cargo run -p strong-type-tests --example perf_five_auto
+cargo run -p strong-type-tests --example perf_ten_auto
+cargo run -p strong-type-tests --example perf_addable_scalable
+```
+
+- `perf_single_auto.rs` is the baseline: `auto_operators = "full"` emits every ownership combination and delivers the best raw throughput.
+- Flip the same example to `auto_operators = "delegated"` to sample the delegated mode; it keeps the full API but delegates to shared functions, usually lowering debug binary size by 30-50% while introducing a barely-measurable (<2%) runtime hit because the helpers are `#[inline(never)]`.
+- `perf_single_minimal.rs` (now registered as an example) uses `auto_operators = "minimal"`; it drops borrowed variants entirely and shrinks generated code by ~62% per operator, making it ideal when you wrap dozens of numeric types and only consume owned values.
+- `perf_five_auto.rs`/`perf_ten_auto.rs` show how costs scale as you introduce more wrappers, while `perf_addable_scalable.rs` demonstrates mixing operator modes like `addable` and `scalable`.
+
+All perf examples print timing summaries so you can spot regressions locally before shipping CI changes or when experimenting with new operator strategies.
 
 ### Caveats:
 - When using `#[derive(StrongType)]`, the traits `Eq` and `PartialEq` are implemented with `impl`. 

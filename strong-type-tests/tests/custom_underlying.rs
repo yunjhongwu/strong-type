@@ -68,4 +68,20 @@ mod tests {
             "Surname(Name(Tag(tag)))"
         );
     }
+
+    #[test]
+    fn test_custom_underlying_accepts_primitive_paths() {
+        #[derive(StrongType)]
+        struct Credits(core::primitive::i64);
+
+        #[derive(StrongType)]
+        #[strong_type(underlying=core::primitive::i64)]
+        struct Ledger(Credits);
+
+        assert_eq!(
+            core::mem::size_of::<Ledger>(),
+            core::mem::size_of::<core::primitive::i64>()
+        );
+        assert_eq!(Ledger::new(Credits::new(42)).primitive(), 42);
+    }
 }

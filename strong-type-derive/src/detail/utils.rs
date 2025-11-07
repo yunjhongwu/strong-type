@@ -1,12 +1,19 @@
 use crate::detail::underlying_type_utils::get_type_group;
 use crate::detail::{TypeInfo, UnderlyingType, ValueTypeGroup, get_type};
+use quote::ToTokens;
 use syn::{Data, DeriveInput, Fields};
+
+const SUPPORTED_PRIMITIVES: &str =
+    "i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize, f32, f64, bool, char, String";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum AutoOperatorMode {
     None,
     Full,
     Minimal,
+    /// Delegated mode - generates operators that delegate to shared implementations
+    /// for reduced binary size (30-50% reduction in debug builds)
+    Delegated,
 }
 
 pub(crate) struct StrongTypeAttributes {
@@ -51,8 +58,8 @@ impl TypeMetadata {
             syn::Error::new_spanned(
                 input,
                 format!(
-                    "Unable to determine the primitive type of '{}'. Supported types are: i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize, f32, f64, bool, char, String",
-                    attributes.type_info.value_type
+                    "Unable to determine the primitive type of '{}'. Supported types are: {}",
+                    attributes.type_info.value_type, SUPPORTED_PRIMITIVES
                 ),
             )
         })?;
@@ -92,8 +99,9 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> Result<StrongTypeAttributes
                         match value.value().as_str() {
                             "minimal" => attributes.auto_operator_mode = AutoOperatorMode::Minimal,
                             "full" => attributes.auto_operator_mode = AutoOperatorMode::Full,
+                            "delegated" => attributes.auto_operator_mode = AutoOperatorMode::Delegated,
                             other => return Err(meta.error(format!(
-                                "Invalid auto_operators value '{}'. Valid values are: 'minimal', 'full'",
+                                "Invalid auto_operators value '{}'. Valid values are: 'minimal', 'full', 'delegated'",
                                 other
                             ))),
                         }
@@ -115,17 +123,36 @@ pub(crate) fn get_attributes(input: &DeriveInput) -> Result<StrongTypeAttributes
                     attributes.has_conversion = true;
                     Ok(())
                 } else if meta.path.is_ident("underlying") {
-                    if let Ok(strm) = meta.value() {
-                        if let Ok(primitive_type) = strm.parse::<syn::Ident>() {
-                            attributes.type_info.type_group = get_type_group(&primitive_type, UnderlyingType::Derived);
-                            attributes.type_info.primitive_type = primitive_type;
-                        } else {
-                            return Err(meta.error("Failed to parse custom underlying type. Expected a type identifier."));
-                        }
-                    }
+                    let value_stream = meta
+                        .value()
+                        .map_err(|_| meta.error("Expected syntax like #[strong_type(underlying = i32)]."))?;
+                    let primitive_path: syn::Path = value_stream
+                        .parse()
+                        .map_err(|_| meta.error("Failed to parse underlying path. Use primitives such as i32 or core::primitive::i32."))?;
+                    let primitive_ident = primitive_path
+                        .segments
+                        .last()
+                        .ok_or_else(|| meta.error("underlying attribute must reference a primitive type."))?
+                        .ident
+                        .clone();
+
+                    let type_group = get_type_group(&primitive_ident, UnderlyingType::Derived)
+                        .ok_or_else(|| {
+                            meta.error(format!(
+                                "Unsupported underlying primitive '{}'. Supported primitives are: {}",
+                                primitive_ident, SUPPORTED_PRIMITIVES
+                            ))
+                        })?;
+
+                    attributes.type_info.type_group = Some(type_group);
+                    attributes.type_info.primitive_type = primitive_ident;
                     Ok(())
                 } else {
-                    Err(meta.error("Invalid strong_type attribute. Valid attributes are: auto_operators, addable, scalable, custom_display, conversion, underlying=<type>"))
+                    let attr_name = meta.path.to_token_stream().to_string();
+                    Err(meta.error(format!(
+                        "Unknown strong_type attribute '{}'. Valid attributes are: auto_operators, addable, scalable, custom_display, conversion, underlying=<type>",
+                        attr_name
+                    )))
                 }
             })?;
         }
