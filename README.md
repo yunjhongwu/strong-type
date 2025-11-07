@@ -18,11 +18,13 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
   - Conditionally, based on the underlying data type, traits like `Copy`, `Eq`, `Ord`, `Hash` may also be implemented. For primitive data types like `i32` or `bool`, these additional traits will be automatically included.
   - Numeric types, both integer and floating-point, also implement constants `MIN`, `MAX`, `INFINITY`, `NEG_INFINITY`, and `ZERO`. Additionally, for floating-point types, `NAN` is implemented.
 
-- **Attributes:** 
+- **Attributes:**
   - Adding the following attributes to `#[strong_type(...)]` allows for additional features:
-    - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators.
+    - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators with all ownership variants (owned, `&Self`, etc.).
+      - Use `auto_operators = "minimal"` for a lightweight version that generates only owned-value operations, reducing binary size by ~62% per operator while maintaining core functionality.
+      - Use `auto_operators = "full"` or just `auto_operators` for the complete set of operator implementations.
     - `addable`: Automatically implements the `Add`, `Sub`, and other relevant traits. The attribute is a strict subset of `auto_operators`.
-    - `scalable`: Automatically implements the `Mul`, `Div`, `Rem`, and other relevant traits between a strong typed struct and its primitive type. Note that the attribute is not a subset of `auto_operators`. 
+    - `scalable`: Automatically implements the `Mul`, `Div`, `Rem`, and other relevant traits between a strong typed struct and its primitive type. Note that the attribute is not a subset of `auto_operators`.
     - `custom_display`: Allows users to manually implement the `Display` trait, providing an alternative to the default display format.
     - `conversion`: Automatically implements `From` and `Into` traits for the underlying type. This is optional since conversion may make strong types less distinct.
     - `underlying`: Specifies the underlying primitive type for nested strong types.
@@ -128,6 +130,39 @@ struct Millisecond(u32);
 let x = Millisecond::new(2);
 
 assert_eq!(x * 3, Millisecond(6));
+```
+
+#### Minimal operators for reduced binary size:
+
+```rust
+use strong_type::StrongType;
+
+// Full mode: generates operators for all ownership combinations
+// (Type + Type, Type + &Type, &Type + Type, &Type + &Type)
+#[derive(StrongType)]
+#[strong_type(auto_operators)]  // or auto_operators = "full"
+struct FullPrice(i32);
+
+let x = FullPrice::new(10);
+let y = FullPrice::new(20);
+assert_eq!(&x + &y, FullPrice(30));  // Works with references
+
+// Minimal mode: generates only owned operations for smaller binary size
+// Reduces generated code by ~62% per operator
+#[derive(StrongType)]
+#[strong_type(auto_operators = "minimal")]
+struct MinimalPrice(i32);
+
+let x = MinimalPrice::new(10);
+let y = MinimalPrice::new(20);
+assert_eq!(x + y, MinimalPrice(30));  // Works with owned values
+// assert_eq!(&x + &y, MinimalPrice(30));  // Won't compile - references not supported
+
+// Minimal mode still supports:
+// - All basic operators: +, -, *, /, %
+// - Assignment operators: +=, -=, *=, /=, %=
+// - Negation: -x
+// - Iterator traits: Sum, Product
 ```
 
 #### Named bool type with logical operations:

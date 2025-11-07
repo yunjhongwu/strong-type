@@ -10,6 +10,7 @@ mod conversion;
 mod display;
 mod hash;
 mod macros;
+mod minimal_operators;
 mod nan;
 mod negate;
 mod scalable;
@@ -34,8 +35,11 @@ pub(crate) use constants::{
 pub(crate) use conversion::{implement_conversion, implement_str_conversion};
 pub(crate) use display::implement_display;
 pub(crate) use hash::implement_hash;
+pub(crate) use minimal_operators::{
+    impl_minimal_negate, implement_minimal_arithmetic, implement_minimal_bool_ops,
+};
 pub(crate) use nan::implement_nan;
 pub(crate) use negate::implement_negate;
 pub(crate) use scalable::implement_scalable;
 pub(crate) use underlying_type_utils::{TypeInfo, UnderlyingType, ValueTypeGroup, get_type};
-pub(crate) use utils::{StrongTypeAttributes, get_attributes, validate_struct};
+pub(crate) use utils::{AutoOperatorMode, TypeMetadata, validate_struct};
