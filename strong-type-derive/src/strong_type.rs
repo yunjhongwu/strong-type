@@ -1,8 +1,10 @@
 use crate::detail::{
-    AutoOperatorMode, TypeMetadata, UnderlyingType, ValueTypeGroup, impl_minimal_negate,
-    implement_addable, implement_arithmetic, implement_basic, implement_basic_primitive,
-    implement_basic_string, implement_bit_shift, implement_bool_ops, implement_constants,
-    implement_constants_derived, implement_conversion, implement_display, implement_hash,
+    AutoOperatorMode, TypeMetadata, UnderlyingType, ValueTypeGroup, generate_strong_type_ops_impl,
+    impl_minimal_negate, implement_addable, implement_arithmetic, implement_basic,
+    implement_basic_primitive, implement_basic_string, implement_bit_shift, implement_bool_ops,
+    implement_constants, implement_constants_derived, implement_conversion,
+    implement_delegated_arithmetic, implement_delegated_bit_shift, implement_delegated_bool_ops,
+    implement_delegated_negate, implement_delegated_scalable, implement_display, implement_hash,
     implement_infinity, implement_limit, implement_minimal_arithmetic, implement_minimal_bool_ops,
     implement_nan, implement_negate, implement_primitive_accessor,
     implement_primitive_accessor_derived, implement_primitive_str_accessor,
@@ -38,6 +40,12 @@ fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error
 
     let mut ast = quote!();
     ast.extend(implement_basic(name, value_type, primitive_type));
+
+    // Generate StrongTypeOps trait implementation if operators will be generated
+    // This trait is required for delegated operators to work
+    if auto_operator_mode == AutoOperatorMode::Delegated || has_addable || has_scalable {
+        ast.extend(generate_strong_type_ops_impl(name, primitive_type));
+    }
 
     if !has_custom_display {
         ast.extend(implement_display(name));
@@ -121,6 +129,10 @@ fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error
                     ast.extend(implement_minimal_arithmetic(name));
                     ast.extend(impl_minimal_negate(name));
                 }
+                AutoOperatorMode::Delegated => {
+                    ast.extend(implement_delegated_arithmetic(name));
+                    ast.extend(implement_delegated_negate(name));
+                }
                 AutoOperatorMode::None => {
                     if has_addable {
                         ast.extend(implement_addable(name));
@@ -129,7 +141,11 @@ fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error
                 }
             }
             if has_scalable {
-                ast.extend(implement_scalable(name, value_type));
+                if auto_operator_mode == AutoOperatorMode::Delegated {
+                    ast.extend(implement_delegated_scalable(name, value_type));
+                } else {
+                    ast.extend(implement_scalable(name, value_type));
+                }
                 if auto_operator_mode == AutoOperatorMode::None && !has_addable {
                     ast.extend(implement_negate(name));
                 }
@@ -147,6 +163,11 @@ fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error
                     ast.extend(impl_minimal_negate(name));
                     // No bit shifts in minimal mode
                 }
+                AutoOperatorMode::Delegated => {
+                    ast.extend(implement_delegated_arithmetic(name));
+                    ast.extend(implement_delegated_negate(name));
+                    ast.extend(implement_delegated_bit_shift(name));
+                }
                 AutoOperatorMode::None => {
                     if has_addable {
                         ast.extend(implement_addable(name));
@@ -155,7 +176,11 @@ fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error
                 }
             }
             if has_scalable {
-                ast.extend(implement_scalable(name, value_type));
+                if auto_operator_mode == AutoOperatorMode::Delegated {
+                    ast.extend(implement_delegated_scalable(name, value_type));
+                } else {
+                    ast.extend(implement_scalable(name, value_type));
+                }
                 if auto_operator_mode == AutoOperatorMode::None && !has_addable {
                     ast.extend(implement_negate(name));
                 }
@@ -171,6 +196,10 @@ fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error
                     ast.extend(implement_minimal_arithmetic(name));
                     // No bit shifts in minimal mode
                 }
+                AutoOperatorMode::Delegated => {
+                    ast.extend(implement_delegated_arithmetic(name));
+                    ast.extend(implement_delegated_bit_shift(name));
+                }
                 AutoOperatorMode::None => {
                     if has_addable {
                         ast.extend(implement_addable(name));
@@ -178,7 +207,11 @@ fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error
                 }
             }
             if has_scalable {
-                ast.extend(implement_scalable(name, value_type));
+                if auto_operator_mode == AutoOperatorMode::Delegated {
+                    ast.extend(implement_delegated_scalable(name, value_type));
+                } else {
+                    ast.extend(implement_scalable(name, value_type));
+                }
             }
         }
         ValueTypeGroup::Bool(_) => match auto_operator_mode {
@@ -187,6 +220,9 @@ fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error
             }
             AutoOperatorMode::Minimal => {
                 ast.extend(implement_minimal_bool_ops(name));
+            }
+            AutoOperatorMode::Delegated => {
+                ast.extend(implement_delegated_bool_ops(name));
             }
             AutoOperatorMode::None => {}
         },

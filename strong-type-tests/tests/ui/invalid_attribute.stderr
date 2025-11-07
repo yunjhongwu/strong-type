@@ -1,0 +1,5 @@
+error: Unknown strong_type attribute 'minimal_operators'. Valid attributes are: auto_operators, addable, scalable, custom_display, conversion, underlying=<type>
+ --> tests/ui/invalid_attribute.rs:4:15
+  |
+4 | #[strong_type(minimal_operators)]
+  |               ^^^^^^^^^^^^^^^^^
