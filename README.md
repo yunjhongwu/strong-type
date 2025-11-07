@@ -13,8 +13,8 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 
 ## Features
 
-- **Derive trait `StrongType`:** Create a named strong type. 
-  - The macro automatically implements `Clone`, `Debug`, `PartialEq`, and `PartialOrd`, and will only add `Copy`, `Default`, `Eq`, `Ord`, `Hash`, `Send`, or `Sync` when the wrapped type supports those traits.
+- **Derive trait `StrongType`:** Create a named strong type.
+  - The macro automatically implements `Clone`, `Debug`, `PartialEq`, and `PartialOrd`, and will conditionally add `Copy`, `Default`, `Eq`, `Ord`, and `Hash` when appropriate. `Send` and `Sync` are automatically derived by Rust when the wrapped type implements them.
   - Every generated type exposes ergonomic helpers such as `new`, `const_new`, `into_inner`, `as_ref`, and `as_mut`, plus blanket `AsRef`/`AsMut` implementations so you can seamlessly borrow the inner value.
   - Conditionally, based on the underlying data type, traits like `Copy`, `Eq`, `Ord`, `Hash` may also be implemented. For primitive data types like `i32` or `bool`, these additional traits will be automatically included.
   - Numeric types, both integer and floating-point, also implement constants `MIN`, `MAX`, `INFINITY`, `NEG_INFINITY`, and `ZERO`. Additionally, for floating-point types, `NAN` is implemented.
@@ -22,8 +22,8 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 - **Attributes:**
   - Adding the following attributes to `#[strong_type(...)]` allows for additional features:
     - `auto_operators`: Automatically implements relevant arithmetic (for numeric types) or logical (for boolean types) operators with all ownership variants (owned, `&Self`, etc.).
-      - Use `auto_operators = "delegated"` when you want all ownership combinations but prefer smaller binaries; delegated mode routes operator bodies through shared helpers in `strong_type::delegation`, trimming monomorphization by roughly 30-50% in debug builds at the cost of a small inlining opportunity.
-      - Use `auto_operators = "minimal"` for a lightweight version that generates only owned-value operations, reducing binary size by ~62% per operator while maintaining core functionality.
+      - Use `auto_operators = "delegated"` when you want all ownership combinations but prefer smaller binaries (requires the primitive type to be `Copy`); delegated mode routes operator bodies through shared helpers in `strong_type::delegation`, trimming monomorphization in debug builds at the cost of a small inlining opportunity.
+      - Use `auto_operators = "minimal"` for a lightweight version that generates only owned-value operations, reducing binary size while maintaining core functionality.
       - Use `auto_operators = "full"` or just `auto_operators` for the complete set of operator implementations.
     - `addable`: Automatically implements the `Add`, `Sub`, and other relevant traits. The attribute is a strict subset of `auto_operators`.
     - `scalable`: Automatically implements the `Mul`, `Div`, `Rem`, and other relevant traits between a strong typed struct and its primitive type. Note that the attribute is not a subset of `auto_operators`.
@@ -35,7 +35,7 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 Add `strong-type` to your `Cargo.toml`:
 ```toml
 [dependencies]
-strong-type = "0.12"
+strong-type = "1.0"
 ```
 
 ## Supported underlying types:
@@ -150,7 +150,6 @@ let y = FullPrice::new(20);
 assert_eq!(&x + &y, FullPrice(30));  // Works with references
 
 // Minimal mode: generates only owned operations for smaller binary size
-// Reduces generated code by ~62% per operator
 #[derive(StrongType)]
 #[strong_type(auto_operators = "minimal")]
 struct MinimalPrice(i32);
