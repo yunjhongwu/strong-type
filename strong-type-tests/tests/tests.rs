@@ -6,4 +6,5 @@ mod diagnostics;
 mod display;
 mod ergonomics;
 mod minimal_operators;
+mod no_std_compat;
 mod strong_type;

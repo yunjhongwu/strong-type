@@ -1,11 +1,11 @@
 [package]
 name = "strong-type-derive"
-description = "Macro implemenation for #[derive(StrongType)]"
+description = "Macro implementation for #[derive(StrongType)]"
 version = "1.0.0"
 edition = "2024"
 
 license = "MIT OR Apache-2.0"
-keywords = ["primitive", "string", "strongly-typed"]
+keywords = ["primitive", "string", "strongly-typed", "no_std"]
 repository = "https://github.com/yunjhongwu/strong-type"
 readme = "../README.md"
 

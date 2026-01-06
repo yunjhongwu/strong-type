@@ -19,6 +19,7 @@ use super::codegen_framework::{
     generate_unary_operator_with_strategy, scalar_ops, unary_ops,
 };
 use proc_macro2::TokenStream;
+use quote::format_ident;
 
 /// Generates delegated arithmetic operators (Add, Sub, Mul, Div, Rem) for a type
 pub(crate) fn implement_delegated_arithmetic(name: &syn::Ident) -> TokenStream {
@@ -137,7 +138,7 @@ pub(crate) fn implement_delegated_bit_shift(name: &syn::Ident) -> TokenStream {
 
     let mut result = TokenStream::new();
     for type_str in SHIFT_TYPES {
-        let shift_type = syn::parse_str::<syn::Ident>(type_str).unwrap();
+        let shift_type = format_ident!("{}", type_str);
         result.extend(generate_bit_shift_for_type_with_strategy(
             name,
             &shift_type,

@@ -1,13 +1,18 @@
 [package]
 name = "strong-type"
-description = "Procedural macros for naming and strong-typing pritimives and strings"
+description = "Procedural macros for naming and strong-typing primitives and strings"
 version = "1.0.0"
 edition = "2024"
 
 license = "MIT OR Apache-2.0"
-keywords = ["primitive", "string", "strongly-typed"]
+keywords = ["primitive", "string", "strongly-typed", "no_std"]
 repository = "https://github.com/yunjhongwu/strong-type"
 readme = "../README.md"
+
+[features]
+default = ["std"]
+std = ["alloc"]
+alloc = []
 
 [dependencies]
 strong-type-derive = { version = "1.0.0", path = "../strong-type-derive" }

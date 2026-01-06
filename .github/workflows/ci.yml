@@ -40,3 +40,27 @@ jobs:
 
       - name: Test
         run: cargo test
+
+  no_std:
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          target: thumbv7m-none-eabi
+
+      - name: Checkout codebase
+        uses: actions/checkout@v3
+
+      - name: Build no_std (no features)
+        run: cargo build -p strong-type --no-default-features
+
+      - name: Build no_std + alloc
+        run: cargo build -p strong-type --no-default-features --features alloc
+
+      - name: Verify on no_std target
+        run: cargo build -p strong-type --target thumbv7m-none-eabi --no-default-features
