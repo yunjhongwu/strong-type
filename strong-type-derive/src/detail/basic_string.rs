@@ -9,8 +9,8 @@ pub(crate) fn implement_basic_string(name: &syn::Ident) -> TokenStream {
             }
         }
 
-        impl std::cmp::PartialOrd for #name {
-            fn partial_cmp(&self, rhs: &Self) -> Option<std::cmp::Ordering> {
+        impl core::cmp::PartialOrd for #name {
+            fn partial_cmp(&self, rhs: &Self) -> Option<core::cmp::Ordering> {
                  Some(self.cmp(rhs))
             }
         }

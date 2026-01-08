@@ -13,6 +13,7 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 
 ## Features
 
+- **`no_std` compatible:** Works in `no_std` environments with optional `alloc` support for `String` types.
 - **Derive trait `StrongType`:** Create a named strong type.
   - The macro automatically implements `Clone`, `Debug`, `PartialEq`, and `PartialOrd`, and will conditionally add `Copy`, `Default`, `Eq`, `Ord`, and `Hash` when appropriate. `Send` and `Sync` are automatically derived by Rust when the wrapped type implements them.
   - Every generated type exposes ergonomic helpers such as `new`, `const_new`, `into_inner`, `as_ref`, and `as_mut`, plus blanket `AsRef`/`AsMut` implementations so you can seamlessly borrow the inner value.
@@ -36,6 +37,37 @@ Add `strong-type` to your `Cargo.toml`:
 ```toml
 [dependencies]
 strong-type = "1.0"
+```
+
+## `no_std` Support
+
+This crate supports `no_std` environments. By default, the `std` feature is enabled.
+
+```toml
+# Default (with std)
+strong-type = "1.0"
+
+# no_std with alloc (for String support)
+strong-type = { version = "1.0", default-features = false, features = ["alloc"] }
+
+# no_std without alloc (primitives only)
+strong-type = { version = "1.0", default-features = false }
+```
+
+| Configuration | Primitives | `String` |
+|---------------|:----------:|:--------:|
+| `std` or `alloc` | ✓ | ✓ |
+| (none) | ✓ | ✗ |
+
+> **Note:** `std` and `alloc` are functionally equivalent for this crate. The `std` feature (enabled by default) exists for convention and future compatibility.
+
+When using `String` in `no_std` mode, import it from the crate:
+
+```rust
+use strong_type::{StrongType, String};
+
+#[derive(StrongType)]
+struct Name(String);
 ```
 
 ## Supported underlying types:

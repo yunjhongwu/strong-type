@@ -22,6 +22,39 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 // ============================================================================
+// Helper Functions
+// ============================================================================
+
+/// Converts an operator symbol string to a TokenStream using direct token construction.
+/// This avoids the overhead of parsing strings at macro expansion time.
+fn op_to_tokens(op: &str) -> TokenStream {
+    match op {
+        "+" => quote!(+),
+        "-" => quote!(-),
+        "*" => quote!(*),
+        "/" => quote!(/),
+        "%" => quote!(%),
+        "&" => quote!(&),
+        "|" => quote!(|),
+        "^" => quote!(^),
+        "!" => quote!(!),
+        "+=" => quote!(+=),
+        "-=" => quote!(-=),
+        "*=" => quote!(*=),
+        "/=" => quote!(/=),
+        "%=" => quote!(%=),
+        "&=" => quote!(&=),
+        "|=" => quote!(|=),
+        "^=" => quote!(^=),
+        "<<" => quote!(<<),
+        ">>" => quote!(>>),
+        "<<=" => quote!(<<=),
+        ">>=" => quote!(>>=),
+        _ => panic!("Unknown operator symbol: {}", op),
+    }
+}
+
+// ============================================================================
 // Core Abstractions
 // ============================================================================
 
@@ -284,8 +317,8 @@ pub fn generate_binary_operator_with_strategy(
     let assign_trait = format_ident!("{}", spec.assign_trait);
     let assign_method = format_ident!("{}", spec.assign_method);
 
-    let op_symbol = syn::parse_str::<TokenStream>(spec.op_symbol).unwrap();
-    let assign_op_symbol = syn::parse_str::<TokenStream>(spec.assign_op_symbol).unwrap();
+    let op_symbol = op_to_tokens(spec.op_symbol);
+    let assign_op_symbol = op_to_tokens(spec.assign_op_symbol);
 
     // Determine the operation body based on delegation strategy
     // Note: Only the fully-owned variant (Self, Self) can use delegation
@@ -308,41 +341,41 @@ pub fn generate_binary_operator_with_strategy(
         GenerationMode::Full => {
             // Generate all 4 ownership variants + assignment ops
             let mut result = quote! {
-                impl std::ops::#trait_name<Self> for #name {
+                impl core::ops::#trait_name<Self> for #name {
                     type Output = Self;
                     fn #method(self, rhs: Self) -> Self::Output {
                         #op_body_owned
                     }
                 }
 
-                impl std::ops::#trait_name<&Self> for #name {
+                impl core::ops::#trait_name<&Self> for #name {
                     type Output = Self;
                     fn #method(self, rhs: &Self) -> Self::Output {
                         #op_body_ref
                     }
                 }
 
-                impl<'a> std::ops::#trait_name<#name> for &'a #name {
+                impl<'a> core::ops::#trait_name<#name> for &'a #name {
                     type Output = #name;
                     fn #method(self, rhs: #name) -> Self::Output {
                         #ref_op_body
                     }
                 }
 
-                impl<'a> std::ops::#trait_name<&#name> for &'a #name {
+                impl<'a> core::ops::#trait_name<&#name> for &'a #name {
                     type Output = #name;
                     fn #method(self, rhs: &#name) -> Self::Output {
                         #ref_op_body
                     }
                 }
 
-                impl std::ops::#assign_trait<Self> for #name {
+                impl core::ops::#assign_trait<Self> for #name {
                     fn #assign_method(&mut self, rhs: Self) {
                         self.0 #assign_op_symbol rhs.value()
                     }
                 }
 
-                impl std::ops::#assign_trait<&Self> for #name {
+                impl core::ops::#assign_trait<&Self> for #name {
                     fn #assign_method(&mut self, rhs: &Self) {
                         self.0 #assign_op_symbol rhs.value()
                     }
@@ -360,15 +393,15 @@ pub fn generate_binary_operator_with_strategy(
                 };
 
                 result.extend(quote! {
-                    impl std::iter::#iterator_trait<Self> for #name {
+                    impl core::iter::#iterator_trait<Self> for #name {
                         fn #iterator_method<I: Iterator<Item = Self>>(iter: I) -> Self {
-                            iter.fold(#neutral_element, std::ops::#trait_name::#method)
+                            iter.fold(#neutral_element, core::ops::#trait_name::#method)
                         }
                     }
 
-                    impl<'a> std::iter::#iterator_trait<&'a Self> for #name {
+                    impl<'a> core::iter::#iterator_trait<&'a Self> for #name {
                         fn #iterator_method<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
-                            iter.fold(#neutral_element, std::ops::#trait_name::#method)
+                            iter.fold(#neutral_element, core::ops::#trait_name::#method)
                         }
                     }
                 });
@@ -379,14 +412,14 @@ pub fn generate_binary_operator_with_strategy(
         GenerationMode::Minimal => {
             // Generate basic impl + assignment ops + iterator traits (but no reference variants)
             let mut result = quote! {
-                impl std::ops::#trait_name<Self> for #name {
+                impl core::ops::#trait_name<Self> for #name {
                     type Output = Self;
                     fn #method(self, rhs: Self) -> Self::Output {
                         #op_body_owned
                     }
                 }
 
-                impl std::ops::#assign_trait<Self> for #name {
+                impl core::ops::#assign_trait<Self> for #name {
                     fn #assign_method(&mut self, rhs: Self) {
                         self.0 #assign_op_symbol rhs.value()
                     }
@@ -404,9 +437,9 @@ pub fn generate_binary_operator_with_strategy(
                 };
 
                 result.extend(quote! {
-                    impl std::iter::#iterator_trait<Self> for #name {
+                    impl core::iter::#iterator_trait<Self> for #name {
                         fn #iterator_method<I: Iterator<Item = Self>>(iter: I) -> Self {
-                            iter.fold(#neutral_element, std::ops::#trait_name::#method)
+                            iter.fold(#neutral_element, core::ops::#trait_name::#method)
                         }
                     }
                 });
@@ -435,7 +468,7 @@ pub fn generate_unary_operator_with_strategy(
 ) -> TokenStream {
     let trait_name = format_ident!("{}", spec.trait_name);
     let method = format_ident!("{}", spec.method);
-    let op_symbol = syn::parse_str::<TokenStream>(spec.op_symbol).unwrap();
+    let op_symbol = op_to_tokens(spec.op_symbol);
 
     // Determine the operation body based on delegation strategy
     let op_body = match strategy {
@@ -453,14 +486,14 @@ pub fn generate_unary_operator_with_strategy(
     match mode {
         GenerationMode::Full => {
             quote! {
-                impl std::ops::#trait_name for #name {
+                impl core::ops::#trait_name for #name {
                     type Output = Self;
                     fn #method(self) -> Self::Output {
                         #op_body
                     }
                 }
 
-                impl<'a> std::ops::#trait_name for &'a #name {
+                impl<'a> core::ops::#trait_name for &'a #name {
                     type Output = #name;
                     fn #method(self) -> Self::Output {
                         #ref_op_body
@@ -470,7 +503,7 @@ pub fn generate_unary_operator_with_strategy(
         }
         GenerationMode::Minimal => {
             quote! {
-                impl std::ops::#trait_name for #name {
+                impl core::ops::#trait_name for #name {
                     type Output = Self;
                     fn #method(self) -> Self::Output {
                         #op_body
@@ -502,8 +535,8 @@ pub fn generate_scalar_operator_with_strategy(
     let assign_trait = format_ident!("{}", spec.assign_trait);
     let assign_method = format_ident!("{}", spec.assign_method);
 
-    let op_symbol = syn::parse_str::<TokenStream>(spec.op_symbol).unwrap();
-    let assign_op_symbol = syn::parse_str::<TokenStream>(spec.assign_op_symbol).unwrap();
+    let op_symbol = op_to_tokens(spec.op_symbol);
+    let assign_op_symbol = op_to_tokens(spec.assign_op_symbol);
 
     // Determine the operation body based on delegation strategy
     let op_body = match strategy {
@@ -521,21 +554,21 @@ pub fn generate_scalar_operator_with_strategy(
     let comm_ref_body = quote! { #name(self #op_symbol rhs.0) };
 
     let mut result = quote! {
-        impl std::ops::#trait_name<#value_type> for #name {
+        impl core::ops::#trait_name<#value_type> for #name {
             type Output = Self;
             fn #method(self, rhs: #value_type) -> Self::Output {
                 #op_body
             }
         }
 
-        impl<'a> std::ops::#trait_name<#value_type> for &'a #name {
+        impl<'a> core::ops::#trait_name<#value_type> for &'a #name {
             type Output = #name;
             fn #method(self, rhs: #value_type) -> Self::Output {
                 #ref_op_body
             }
         }
 
-        impl std::ops::#assign_trait<#value_type> for #name {
+        impl core::ops::#assign_trait<#value_type> for #name {
             fn #assign_method(&mut self, rhs: #value_type) {
                 self.0 #assign_op_symbol rhs;
             }
@@ -545,14 +578,14 @@ pub fn generate_scalar_operator_with_strategy(
     // Add commutative variant if specified
     if spec.commutative {
         result.extend(quote! {
-            impl std::ops::#trait_name<#name> for #value_type {
+            impl core::ops::#trait_name<#name> for #value_type {
                 type Output = #name;
                 fn #method(self, rhs: #name) -> Self::Output {
                     #comm_body
                 }
             }
 
-            impl<'a> std::ops::#trait_name<&#name> for #value_type {
+            impl<'a> core::ops::#trait_name<&#name> for #value_type {
                 type Output = #name;
                 fn #method(self, rhs: &#name) -> Self::Output {
                     #comm_ref_body
@@ -668,40 +701,40 @@ pub(crate) fn generate_bit_shift_for_type_with_strategy(
     let shr_ref_body = quote! { #name::new(self.value() >> rhs) };
 
     quote! {
-        impl std::ops::Shl<#shift_type> for #name {
+        impl core::ops::Shl<#shift_type> for #name {
             type Output = Self;
             fn shl(self, rhs: #shift_type) -> Self::Output {
                 #shl_body
             }
         }
 
-        impl std::ops::ShlAssign<#shift_type> for #name {
+        impl core::ops::ShlAssign<#shift_type> for #name {
             fn shl_assign(&mut self, rhs: #shift_type) {
                 self.0 <<= rhs;
             }
         }
 
-        impl std::ops::Shr<#shift_type> for #name {
+        impl core::ops::Shr<#shift_type> for #name {
             type Output = Self;
             fn shr(self, rhs: #shift_type) -> Self::Output {
                 #shr_body
             }
         }
 
-        impl std::ops::ShrAssign<#shift_type> for #name {
+        impl core::ops::ShrAssign<#shift_type> for #name {
             fn shr_assign(&mut self, rhs: #shift_type) {
                 self.0 >>= rhs;
             }
         }
 
-        impl std::ops::Shl<#shift_type> for &#name {
+        impl core::ops::Shl<#shift_type> for &#name {
             type Output = #name;
             fn shl(self, rhs: #shift_type) -> Self::Output {
                 #shl_ref_body
             }
         }
 
-        impl std::ops::Shr<#shift_type> for &#name {
+        impl core::ops::Shr<#shift_type> for &#name {
             type Output = #name;
             fn shr(self, rhs: #shift_type) -> Self::Output {
                 #shr_ref_body

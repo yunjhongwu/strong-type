@@ -1,13 +1,13 @@
-//! This crate offers a derive macro for crafting strong types in Rust, where a strong type
-//! encapsulates a primitive type, providing a distinct, purpose-specific identity. This pattern
-//! is useful for creating distinct types for distinct purposes. Several macro attributes are
-//! provided to customize the strong type, such as directly implementing arithmetic operators of
-//! the underlying primitive type,
-//!
-//! See the [crate documentation](https://crates.io/crates/strong-type) for more details and examples.
-//!
+#![no_std]
 
-use std::fmt::Debug;
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
+// Re-export String for convenience in no_std + alloc environments
+#[cfg(feature = "alloc")]
+pub use alloc::string::String;
+
+use core::fmt::Debug;
 
 /// Derive macro to create strong types in Rust.
 pub use strong_type_derive::StrongType;
@@ -24,6 +24,8 @@ pub trait StrongType: Debug + PartialEq + PartialOrd + Clone {
 /// wrapping the same primitive type, reducing monomorphization cost.
 #[doc(hidden)]
 pub mod delegation {
+    use core::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Neg, Not, Rem, Shl, Shr, Sub};
+
     /// Trait for accessing the underlying primitive value of a strong type.
     /// This trait is automatically implemented by the StrongType derive macro.
     pub trait StrongTypeOps: Sized {
@@ -45,7 +47,7 @@ pub mod delegation {
     pub fn delegate_add<T>(lhs: T, rhs: T) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Add<Output = T::Primitive>,
+        T::Primitive: Add<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() + rhs.to_primitive())
     }
@@ -55,7 +57,7 @@ pub mod delegation {
     pub fn delegate_sub<T>(lhs: T, rhs: T) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Sub<Output = T::Primitive>,
+        T::Primitive: Sub<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() - rhs.to_primitive())
     }
@@ -65,7 +67,7 @@ pub mod delegation {
     pub fn delegate_mul<T>(lhs: T, rhs: T) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Mul<Output = T::Primitive>,
+        T::Primitive: Mul<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() * rhs.to_primitive())
     }
@@ -75,7 +77,7 @@ pub mod delegation {
     pub fn delegate_div<T>(lhs: T, rhs: T) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Div<Output = T::Primitive>,
+        T::Primitive: Div<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() / rhs.to_primitive())
     }
@@ -85,7 +87,7 @@ pub mod delegation {
     pub fn delegate_rem<T>(lhs: T, rhs: T) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Rem<Output = T::Primitive>,
+        T::Primitive: Rem<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() % rhs.to_primitive())
     }
@@ -95,7 +97,7 @@ pub mod delegation {
     pub fn delegate_bitand<T>(lhs: T, rhs: T) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::BitAnd<Output = T::Primitive>,
+        T::Primitive: BitAnd<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() & rhs.to_primitive())
     }
@@ -105,7 +107,7 @@ pub mod delegation {
     pub fn delegate_bitor<T>(lhs: T, rhs: T) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::BitOr<Output = T::Primitive>,
+        T::Primitive: BitOr<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() | rhs.to_primitive())
     }
@@ -115,7 +117,7 @@ pub mod delegation {
     pub fn delegate_bitxor<T>(lhs: T, rhs: T) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::BitXor<Output = T::Primitive>,
+        T::Primitive: BitXor<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() ^ rhs.to_primitive())
     }
@@ -129,7 +131,7 @@ pub mod delegation {
     pub fn delegate_neg<T>(val: T) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Neg<Output = T::Primitive>,
+        T::Primitive: Neg<Output = T::Primitive>,
     {
         T::from_primitive(-val.to_primitive())
     }
@@ -139,7 +141,7 @@ pub mod delegation {
     pub fn delegate_not<T>(val: T) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Not<Output = T::Primitive>,
+        T::Primitive: Not<Output = T::Primitive>,
     {
         T::from_primitive(!val.to_primitive())
     }
@@ -153,7 +155,7 @@ pub mod delegation {
     pub fn delegate_shl<T, Rhs>(lhs: T, rhs: Rhs) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Shl<Rhs, Output = T::Primitive>,
+        T::Primitive: Shl<Rhs, Output = T::Primitive>,
         Rhs: Copy,
     {
         T::from_primitive(lhs.to_primitive() << rhs)
@@ -164,7 +166,7 @@ pub mod delegation {
     pub fn delegate_shr<T, Rhs>(lhs: T, rhs: Rhs) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Shr<Rhs, Output = T::Primitive>,
+        T::Primitive: Shr<Rhs, Output = T::Primitive>,
         Rhs: Copy,
     {
         T::from_primitive(lhs.to_primitive() >> rhs)
@@ -179,7 +181,7 @@ pub mod delegation {
     pub fn delegate_scalar_mul<T>(lhs: T, rhs: T::Primitive) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Mul<Output = T::Primitive>,
+        T::Primitive: Mul<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() * rhs)
     }
@@ -189,7 +191,7 @@ pub mod delegation {
     pub fn delegate_scalar_div<T>(lhs: T, rhs: T::Primitive) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Div<Output = T::Primitive>,
+        T::Primitive: Div<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() / rhs)
     }
@@ -199,7 +201,7 @@ pub mod delegation {
     pub fn delegate_scalar_rem<T>(lhs: T, rhs: T::Primitive) -> T
     where
         T: StrongTypeOps,
-        T::Primitive: std::ops::Rem<Output = T::Primitive>,
+        T::Primitive: Rem<Output = T::Primitive>,
     {
         T::from_primitive(lhs.to_primitive() % rhs)
     }
