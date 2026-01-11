@@ -36,7 +36,7 @@ println!("{}", timestamp); // Timestamp(1701620628123456789)
 Add `strong-type` to your `Cargo.toml`:
 ```toml
 [dependencies]
-strong-type = "1.0"
+strong-type = "1.1"
 ```
 
 ## `no_std` Support
@@ -45,13 +45,13 @@ This crate supports `no_std` environments. By default, the `std` feature is enab
 
 ```toml
 # Default (with std)
-strong-type = "1.0"
+strong-type = "1.1"
 
 # no_std with alloc (for String support)
-strong-type = { version = "1.0", default-features = false, features = ["alloc"] }
+strong-type = { version = "1.1", default-features = false, features = ["alloc"] }
 
 # no_std without alloc (primitives only)
-strong-type = { version = "1.0", default-features = false }
+strong-type = { version = "1.1", default-features = false }
 ```
 
 | Configuration | Primitives | `String` |
