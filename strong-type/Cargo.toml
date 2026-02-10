@@ -1,7 +1,7 @@
 [package]
 name = "strong-type"
 description = "Procedural macros for naming and strong-typing primitives and strings"
-version = "1.1.0"
+version = "1.1.1"
 edition = "2024"
 
 license = "MIT OR Apache-2.0"
@@ -15,4 +15,4 @@ std = ["alloc"]
 alloc = []
 
 [dependencies]
-strong-type-derive = { version = "1.1.0", path = "../strong-type-derive" }
+strong-type-derive = { version = "1.1.1", path = "../strong-type-derive" }
