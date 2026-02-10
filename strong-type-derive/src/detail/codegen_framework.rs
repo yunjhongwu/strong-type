@@ -743,12 +743,13 @@ pub(crate) fn generate_bit_shift_for_type_with_strategy(
     }
 }
 
+/// All integer types used as bit shift amounts
+pub(crate) const SHIFT_TYPES: &[&str] = &[
+    "i8", "i16", "i32", "i64", "i128", "isize", "u8", "u16", "u32", "u64", "u128", "usize",
+];
+
 /// Generates bit shift operations for all integer types
 pub fn generate_bit_shift_operators(name: &syn::Ident) -> TokenStream {
-    const SHIFT_TYPES: &[&str] = &[
-        "i8", "i16", "i32", "i64", "i128", "isize", "u8", "u16", "u32", "u64", "u128", "usize",
-    ];
-
     let mut result = TokenStream::new();
     for type_str in SHIFT_TYPES {
         let shift_type = format_ident!("{}", type_str);

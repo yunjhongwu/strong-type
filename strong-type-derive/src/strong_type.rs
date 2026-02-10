@@ -41,9 +41,9 @@ fn expand_strong_type_impl(input: DeriveInput) -> Result<TokenStream, syn::Error
     let mut ast = quote!();
     ast.extend(implement_basic(name, value_type, primitive_type));
 
-    // Generate StrongTypeOps trait implementation if operators will be generated
-    // This trait is required for delegated operators to work
-    if auto_operator_mode == AutoOperatorMode::Delegated || has_addable || has_scalable {
+    // Generate StrongTypeOps trait implementation only when delegation is used.
+    // This trait is required for delegated operators to work.
+    if auto_operator_mode == AutoOperatorMode::Delegated {
         ast.extend(generate_strong_type_ops_impl(name, primitive_type));
     }
 

@@ -14,9 +14,10 @@
 //! - Still zero-cost in most scenarios
 
 use super::codegen_framework::{
-    DelegationStrategy, GenerationMode, binary_ops, generate_binary_operator_with_strategy,
-    generate_bit_shift_for_type_with_strategy, generate_scalar_operator_with_strategy,
-    generate_unary_operator_with_strategy, scalar_ops, unary_ops,
+    DelegationStrategy, GenerationMode, SHIFT_TYPES, binary_ops,
+    generate_binary_operator_with_strategy, generate_bit_shift_for_type_with_strategy,
+    generate_scalar_operator_with_strategy, generate_unary_operator_with_strategy, scalar_ops,
+    unary_ops,
 };
 use proc_macro2::TokenStream;
 use quote::format_ident;
@@ -132,10 +133,6 @@ pub(crate) fn implement_delegated_scalable(
 
 /// Generates delegated bit shift operations for all integer types
 pub(crate) fn implement_delegated_bit_shift(name: &syn::Ident) -> TokenStream {
-    const SHIFT_TYPES: &[&str] = &[
-        "i8", "i16", "i32", "i64", "i128", "isize", "u8", "u16", "u32", "u64", "u128", "usize",
-    ];
-
     let mut result = TokenStream::new();
     for type_str in SHIFT_TYPES {
         let shift_type = format_ident!("{}", type_str);
