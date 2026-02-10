@@ -7,6 +7,11 @@ pub(crate) fn implement_basic(
     primitive_type: &syn::Ident,
 ) -> TokenStream {
     quote! {
+        // Compile-time guarantee: strong type has the same size as its inner type
+        const _: () = assert!(
+            core::mem::size_of::<#name>() == core::mem::size_of::<#value_type>(),
+        );
+
         impl #name {
             pub fn new(value: impl Into<#value_type>) -> Self {
                 Self(value.into())
