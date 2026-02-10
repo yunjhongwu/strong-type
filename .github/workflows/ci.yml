@@ -19,15 +19,14 @@ jobs:
     env:
       RUSTFLAGS: "-D warnings"
     steps:
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
       - name: Checkout codebase
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo dependencies
+        uses: Swatinem/rust-cache@v2
 
       - name: Format
         run: cargo fmt --check
@@ -35,7 +34,7 @@ jobs:
       - name: Lint
         run: cargo clippy --all-targets
 
-      - name: Build release
+      - name: Build
         run: cargo build
 
       - name: Test
@@ -45,16 +44,16 @@ jobs:
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     steps:
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          target: thumbv7m-none-eabi
-
       - name: Checkout codebase
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7m-none-eabi
+
+      - name: Cache cargo dependencies
+        uses: Swatinem/rust-cache@v2
 
       - name: Build no_std (no features)
         run: cargo build -p strong-type --no-default-features
